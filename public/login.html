@@ -7,21 +7,6 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <style type="text/css">
-      * {
-      margin: 0;
-      }
-      html, body {
-      height: 100%;
-      }
-      .wrapper {
-      min-height: 100%;
-      height: auto !important;
-      height: 100%;
-      margin: 0 auto -155px; /* the bottom margin is the negative value of the footer's height */
-      }
-      .footer, .push {
-      height: 155px; /* .push must be the same height as .footer */
-      }
       .steve-footer {
       padding: 40px 0;
       color: #999;
@@ -68,7 +53,7 @@
         </div>
       </div>
     </div>
-    <footer id="footer" class="steve-footer">
+    <footer id="footer" class="footer navbar-fixed-bottom steve-footer" role="navigation">
       <div class="container">
         <div class="col-md-6">
           <ul class="nav ">
