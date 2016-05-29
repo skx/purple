@@ -2,7 +2,7 @@
 Description=purple alerting service
 
 [Service]
-User=repos
+User=root
 WorkingDirectory=/etc/service/alert.steve.org.uk/
 ExecStart=//etc/service/alert.steve.org.uk/bin/alerter
 KillMode=process

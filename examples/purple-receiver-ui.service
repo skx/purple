@@ -2,7 +2,7 @@
 Description=purple receiver and web UI
 
 [Service]
-User=nobody
+User=root
 WorkingDirectory=/etc/service/alert.steve.org.uk/
 ExecStart=/etc/service/alert.steve.org.uk/run
 KillMode=process
