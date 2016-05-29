@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec plackup  -s Twiggy --workers=4 -0 127.0.0.1 -p 5151 -a ./bin/purple --access-log logs/access.log -E production

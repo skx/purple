@@ -1,0 +1,144 @@
+#!/usr/bin/perl -Ilib/
+#
+# This connects to the SQLite database and does the alerting:
+#
+# * If an event is in the `pending` state, and the `raise_time` is
+#   in the past then change the event-status to `raised` and
+#   sends the notification.
+#
+#   > This ensures new alerts are sent to people.
+#
+#
+# * If an alert is in the raised state and the notified_at is
+#   more than a minut ago - update that field and re-alert.
+#
+#   > This ensures that alerts are not ignored.
+#
+#
+# * If the alert is in the `cleared` state, delete it.
+#
+#   > This keeps our database state low.
+#
+
+
+use strict;
+use warnings;
+
+use Alerts;
+use Alerts::Notifier;
+
+
+
+
+#
+#  Create the helper.
+#
+my $alerter = Alerts::Notifier->new( notify => \&my_notify );
+
+
+
+#
+#  Enter our notification loop.  We aim to run through it once
+# every minute.
+#
+while (1)
+{
+    # Get the start-time of this loop
+    my $start = time();
+
+    # Reap cleared events.
+    $alerter->reap();
+
+    # Notify on any new events which have reached their raise-time
+    $alerter->notifyNew();
+
+    #  If any alerts were last notified >60second ago then renotify.
+    $alerter->reNotify();
+
+    # How long did this loop take us?
+    my $end  = time();
+    my $diff = $end - $start;
+
+    # If less than a minute pad ourselves
+    if ( $diff < 60 )
+    {
+        my $delay = 60 - $diff;
+        print "Sleeping for $delay seconds\n";
+        sleep($delay);
+    }
+
+    # Round and round the merry-go-round.
+}
+
+
+# All done.
+exit(0);
+
+
+
+#
+# Trigger the notification.
+#
+# If the user has created Alerts::Notifier::Local use that, otherwise
+# merely dump to the console
+#
+sub my_notify
+{
+    my ( $id, $reason ) = (@_);
+
+    #
+    #  Has the user provided a Alerts::Notifier::Local module?
+    # if so use it.
+    #
+    my $test = "use Alerts::Notifier::Local;";
+
+    ## no critic (Eval)
+    eval($test);
+    ## use critic
+
+    #
+    #  If no errors, do the raise
+    #
+    if ( !$@ )
+    {
+        my $tmp = Alerts::Notifier::Local->new();
+        $tmp->notify( $id, $reason );
+        return;
+    }
+
+
+    #
+    #  The default alerting mechanism, which just dumps to the console.
+    #
+    print "Default notifier\n";
+
+    #
+    # Get the data associated with this alert.
+    #
+    my $tmp   = Alerts->new();
+    my $event = $tmp->getEvent($id);
+
+    #
+    #  Show why we're being triggered.
+    #
+    if ( $reason =~ /^raise$/ )
+    {
+        print "Raising event $id\n";
+    }
+    elsif ( $reason =~ /^reraise$/i )
+    {
+        print "Re-raising event $id\n";
+    }
+    else
+    {
+        print "Unknown reason for notifying event $id - $reason\n";
+    }
+
+
+    #
+    # Just dump the alert to the console
+    #
+    print "Subject: [$event->{'id'}] $event->{'subject'}\n";
+    print "Source : $event->{'source'}\n";
+    print "\n\t$event->{'detail'}\n\n";
+}

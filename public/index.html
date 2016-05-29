@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Alerts [0/0/0]</title>
+    <meta http-equiv="refresh" content="55">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+      window.onload = function(){
+      if (location.hash !== '') $('a[href="' + location.hash + '"]').tab('show');
+      $('a[data-toggle="tab"]').bind('click', function(e) {
+      location.hash = $(e.target).attr('href').substr(1);
+      });
+      }
+    </script>
+    <script type="text/javascript">
+      (function() {
+
+      $.getJSON( "/events" , function( data ) {
+      var h = {};
+      h['raised'] = 0
+      h['pending'] = 0
+      h['cleared'] = 0
+
+      $.each( data, function( key, val ) {
+
+      // Bump the count of this type of alerts, so we can update the title.
+      var status = val['status'];
+      h[status] = h[status]+1
+
+      // This is horrid - we want to show either "will raise at",
+      // "last notified at", or nothing depending on the type.
+      if ( status == "raised" ) {
+
+          var d = Math.round( val['notified_at'] * 1000)
+          d = parseFloat(d);
+          d = new Date( d  );
+
+      $("#" + val['status'] + "_alerts").find('tbody')
+          .append($('<tr>')
+        .append($('<td>')
+          .append(val['status'])
+          )
+          .append($('<td>')
+          .append(val['source'])
+          )
+          .append($('<td>')
+          .append(val['subject'])
+          )
+          .append($('<td>')
+          .append(d)
+          )
+          .append($('<td>')
+          .append("<a href=\"/clear/" + (val['i']) + "\">clear</a>")
+          )
+          );
+       }
+      if ( status == "pending" ) {
+
+          var d = Math.round( val['raise_at'] * 1000)
+          d = parseFloat(d);
+          d = new Date( d  );
+
+        $("#" + val['status'] + "_alerts").find('tbody')
+          .append($('<tr>')
+        .append($('<td>')
+          .append(val['status'])
+          )
+          .append($('<td>')
+          .append(val['source'])
+          )
+          .append($('<td>')
+          .append(val['subject'])
+          )
+          .append($('<td>')
+          .append(d)
+          )
+          .append($('<td>')
+          .append("<a href=\"/clear/" + (val['i']) + "\">clear</a>")
+          )
+          );
+       }
+      if ( status == "cleared" ) {
+
+        $("#" + val['status'] + "_alerts").find('tbody')
+          .append($('<tr>')
+        .append($('<td>')
+          .append(val['status'])
+          )
+          .append($('<td>')
+          .append(val['source'])
+          )
+          .append($('<td>')
+          .append(val['subject'])
+          )
+          .append($('<td>')
+          .append("<a href=\"/clear/" + (val['i']) + "\">clear</a>")
+          )
+          );
+       }
+
+
+          // Set the title.
+          document.title = "Alerts [" + h['raised'] + "/" + h['pending'] + "/" + h['cleared'] + "]";
+
+          });
+          });
+          })();
+    </script>
+
+  </head>
+  <body>
+
+
+    <div class="container">
+      <h2>Alerts</h2>
+      <ul class="nav nav-tabs" id="myTab">
+        <li class="active"><a data-toggle="tab" href="#raised">Raised</a></li>
+        <li><a data-toggle="tab" href="#pending">Pending</a></li>
+        <li><a data-toggle="tab" href="#cleared">Cleared</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <div id="raised" class="tab-pane fade in active">
+          <table id="raised_alerts" class="table table-hover table-condensed" >
+            <tr><th>Status</th><th>Source</th><th>Subject</th><th>Last Notified</th><th>Actions</th></tr>
+          </table>
+        </div>
+        <div id="pending" class="tab-pane fade">
+          <table id="pending_alerts" class="table table-hover table-condensed" >
+            <tr><th>Status</th><th>Source</th><th>Subject</th><th>Raise Time</th><th>Actions</th></tr>
+          </table>
+        </div>
+        <div id="cleared" class="tab-pane fade">
+          <table id="cleared_alerts" class="table table-hover table-condensed" >
+            <tr><th>Status</th><th>Source</th><th>Subject</th><th>Actions</th></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
