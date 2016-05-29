@@ -43,6 +43,24 @@ In addition to the core-server there is a second process which constantly scans 
    * If an alert is in the `raised` state, and a notification was made more than a minute ago it is re-notified.
 
 
+### Differences between MauveAlert
+
+If you're familiar with the mauvealert project, which inspired this, then the following are the largest differences:
+
+* Alerts in purple are submitted via HTTP-POST requests containing JSON-bodies, rather than `protobuf` bodies over a UDP transport.
+* There is no policy-routing.
+   * All alerts are notified in the same way, rather than being conditional on the alert, the time of day, etc.
+* In purple alerts have no urgency settings, they're all treated at the same priority-leve.
+* The AJAX/web interface in purple is prettier.
+* purple has no notion of supression.
+   * But because alerts are processed every 60 seconds via `bin/alerter` you could fake it by changing that timeout to 3 minutes, or similar.
+* In purple all raised alerts are re-notified every 60 seconds, rather than having any back-off.
+   * You can make alerts one-shot by adding a `.once` suffix to the ID.
+* In purple you must write your own notification-class to deliver alerts.
+   * Although we do include an example which generates emails.
+* In purple you cannot notify when an alert has cleared.
+
+
 ## Submissions
 
 Submissions are expected to be JSON-encoded POST payloads, sent
