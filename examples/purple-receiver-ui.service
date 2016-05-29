@@ -1,0 +1,14 @@
+[Unit]
+Description=purple receiver and web UI
+
+[Service]
+User=nobody
+WorkingDirectory=/etc/service/alert.steve.org.uk/
+ExecStart=/etc/service/alert.steve.org.uk/run
+KillMode=process
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target
+

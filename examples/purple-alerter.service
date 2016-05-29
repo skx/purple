@@ -1,0 +1,13 @@
+[Unit]
+Description=purple alerting service
+
+[Service]
+User=repos
+WorkingDirectory=/etc/service/alert.steve.org.uk/
+ExecStart=//etc/service/alert.steve.org.uk/bin/alerter
+KillMode=process
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target
