@@ -46,7 +46,7 @@ exit if (
 #
 my %data;
 
-$data{ 'id' }      = "heartbeat";
+$data{ 'id' }      = "heartbeat.once";
 $data{ 'source' }  = $CONFIG{'hostname'};
 $data{ 'raise' }   = "+5m";
 $data{ 'raise' }   = "clear" if ($CONFIG{'clear'});
