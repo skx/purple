@@ -62,12 +62,12 @@ As an example the following is a heartbeat alert.  Five minutes after the last u
 
      {
        "id"      : "heartbeat"
-       "subject" : "The heartbeat wasn't sent for deagol.local",
+       "subject" : "The heartbeat wasn't sent for deagol.lan",
        "detail"  : "<p>This indicates that <tt>deagol.lan</tt> might be down!</p>",
        "raise"   : "+5m",
      }
 
-Before the `5m` timeout has been reached the alert will be in the `pending` state.
+Before the `5m` timeout has been reached the alert will be in the `pending` state, after that period has passed the alert will be moved into the `raised` state.
 
 As you might expect the `raise` field is pretty significant.  Expected values are:
 
@@ -82,17 +82,11 @@ As you might expect the `raise` field is pretty significant.  Expected values ar
 
 ## Notifications
 
-There is no built-in facility for sending text-messages, sending pushover
-notifications, or similar.  Instead the default alerting behaviour is
-to simply dump the details of the raised/re-raised alert to the console.
+There is no built-in facility for sending text-messages, sending pushover notifications, or similar.  Instead the default alerting behaviour is to simply dump the details of the raised/re-raised alert to the console.
 
-It is assumed you will have your own local facility for sending the alerts,
-and to implement it you just need to override the `notify` subroutine in
-the `bin/alerter` script.
+It is assumed you will have your own local facility for sending the alerts, and to implement it you just need to override the `notify` subroutine in the `lib/Alerts/Notifier/Local.pm` module.
 
-The alerter has a nice clean setup, which makes adding this functionality,
-to suit your own needs, simple.  The alerter will poll the SQLite database
-when it runs (we recommend every minute):
+The alerter has a nice clean setup, which makes adding this functionality, to suit your own needs, simple.  The alerter will poll the SQLite database when it runs (we recommend every minute):
 
 * Select all alerts which have a raise-time of "now".
     * Send the notification.
