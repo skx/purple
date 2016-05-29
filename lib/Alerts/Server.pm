@@ -17,6 +17,11 @@ get '/' => require_login sub {
     send_file 'index.html';
 };
 
+# Show the login-page
+get '/login' => sub {
+    send_file 'login.html';
+};
+
 # Clear an event.
 get '/clear/:id' => require_login sub {
     my $tmp = Alerts->new();

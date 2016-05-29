@@ -8,6 +8,36 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <style type="text/css">
+* {
+    margin: 0;
+}
+html, body {
+    height: 100%;
+}
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -155px; /* the bottom margin is the negative value of the footer's height */
+}
+.footer, .push {
+    height: 155px; /* .push must be the same height as .footer */
+}
+.steve-footer {
+      padding: 40px 0;
+      color: #999;
+      background-color: #f9f9f9;
+      border-top: 1px solid #e5e5e5;
+      }
+      .steve-footer .nav-header {
+      color: black;
+      font-weight: bold;
+      }
+      .steve-footer p:last-child {
+      margin-bottom: 0;
+      }
+    </style>
 
     <script type="text/javascript">
       window.onload = function(){
@@ -114,7 +144,7 @@
 
   </head>
   <body>
-
+<div class="wrapper">
 
     <div class="container">
       <h2>Alerts</h2>
@@ -142,13 +172,24 @@
         </div>
       </div>
     </div>
-
-        <footer class="footer">
-                  <div class="container">
-                      <p class="text-muted text-right">Powered by <a href="https://github.com/skx/purple/">purple</a></p>
-                </div>
-        </footer>
-
+</div>
+    <footer id="footer" class="steve-footer">
+      <div class="container">
+        <div class="col-md-6">
+          <ul class="nav ">
+            <ul class="nav ">
+              <li class="nav-header">Source Code</li>
+              <li><a href="https://github.com/skx/purple">Available on github</a></li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+          <ul class="nav ">
+            <li class="nav-header">Copyright</li>
+            <li>@ Steve Kemp</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
 
   </body>
 </html>
