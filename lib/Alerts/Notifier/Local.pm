@@ -21,37 +21,34 @@ sub new
 
 
 #
-#  Notifier.
+#  Notifier - in this case we just send an email to `root` (unqualified).
 #
 sub notify
 {
     my ( $self, $id, $reason ) = (@_);
 
-    print "LOCAL NOTIFIER\n";
-
+    # Get the alert-data
     my $tmp   = Alerts->new();
     my $event = $tmp->getEvent($id);
 
-    if ( $reason =~ /^raise$/ )
-    {
-        print "Raising event $id\n";
-    }
-    elsif ( $reason =~ /^reraise$/i )
-    {
-        print "Re-raising event $id\n";
-    }
-    else
-    {
-        print "Unknown reason for notifying event $id - $reason\n";
-    }
+    # Build up a subject
+    my $subject = "$reason: [$event->{'id'}] - $event->{'subject'}";
+
+    # Send an email to root.
+    open( SENDMAIL, "|/usr/lib/sendmail -t" )
+        or return;
+
+    print SENDMAIL <<EOF;
+To: root
+From: root
+Subject: $subject
 
 
-    #
-    #  Dump to console.
-    #
-    print "Subject: [$event->{'id'}] $event->{'subject'}\n";
-    print "Source : $event->{'source'}\n";
-    print "\n\t$event->{'detail'}\n\n";
+$event->{'detail'}
+
+EOF
+
+    close( SENDMAIL )
 
 }
 
