@@ -29,11 +29,16 @@
       if (location.hash !== '') $('a[href="' + location.hash + '"]').tab('show');
       $('a[data-toggle="tab"]').bind('click', function(e) {
       location.hash = $(e.target).attr('href').substr(1);
-      });
+      }
+      );
+
+      $( "table" ).delegate( "tr",  "click", function(  ) {
+         $(this).next().slideToggle(); } );
       }
     </script>
     <script type="text/javascript">
       (function() {
+
 
       $.getJSON( "/events" , function( data ) {
       var h = {};
@@ -73,6 +78,9 @@
           .append("<a href=\"/clear/" + (val['i']) + "\">clear</a>")
           )
           );
+          // Add the detail - hidden by default
+          $("#" + val['status'] + "_alerts").find('tbody')
+          .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
        }
       if ( status == "pending" ) {
 
@@ -80,7 +88,8 @@
           d = parseFloat(d);
           d = new Date( d  );
 
-        $("#" + val['status'] + "_alerts").find('tbody')
+
+          $("#" + val['status'] + "_alerts").find('tbody')
           .append($('<tr>')
         .append($('<td>')
           .append(val['status'])
@@ -98,7 +107,12 @@
           .append("<a href=\"/clear/" + (val['i']) + "\">clear</a>")
           )
           );
-       }
+
+
+          // Add the detail - hidden by default
+          $("#" + val['status'] + "_alerts").find('tbody')
+          .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
+      }
       if ( status == "cleared" ) {
 
         $("#" + val['status'] + "_alerts").find('tbody')
@@ -116,6 +130,10 @@
           .append("<a href=\"/clear/" + (val['i']) + "\">clear</a>")
           )
           );
+
+          // Add the detail - hidden by default
+          $("#" + val['status'] + "_alerts").find('tbody')
+          .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
        }
 
 
@@ -141,17 +159,20 @@
 
       <div class="tab-content">
         <div id="raised" class="tab-pane fade in active">
-          <table id="raised_alerts" class="table table-hover table-bordered table-condensed" >
+          <p>&nbsp;</p>
+          <table id="raised_alerts" class="table table-striped table-hover table-bordered table-condensed" >
             <tr><th>Status</th><th>Source</th><th>Subject</th><th>Last Notified</th><th>Actions</th></tr>
           </table>
         </div>
         <div id="pending" class="tab-pane fade">
-          <table id="pending_alerts" class="table table-hover table-bordered table-condensed" >
+          <p>&nbsp;</p>
+          <table id="pending_alerts" class="table table-striped table-hover table-bordered table-condensed" >
             <tr><th>Status</th><th>Source</th><th>Subject</th><th>Raise Time</th><th>Actions</th></tr>
           </table>
         </div>
         <div id="cleared" class="tab-pane fade">
-          <table id="cleared_alerts" class="table table-hover table-bordered table-condensed" >
+          <p>&nbsp;</p>
+          <table id="cleared_alerts" class="table table-striped table-hover table-bordered table-condensed" >
             <tr><th>Status</th><th>Source</th><th>Subject</th><th>Actions</th></tr>
           </table>
         </div>
