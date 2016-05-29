@@ -84,13 +84,15 @@ As you might expect the `raise` field is pretty significant.  Expected values ar
 
 There is no built-in facility for sending text-messages, sending pushover notifications, or similar.  Instead the default alerting behaviour is to simply dump the details of the raised/re-raised alert to the console.
 
-It is assumed you will have your own local facility for sending the alerts, and to implement it you just need to override the `notify` subroutine in the `lib/Alerts/Notifier/Local.pm` module.  The alerter will use that module/method if present, to generate the notifications.  Beyond that the alerter handles the state-transitions as you would expect:
+It is assumed you will have your own local preferred mechanism for sending the alerts, be it SMS, PushOver, email, or something else.  To implement your notification method you'll need to override the `notify` subroutine in the `lib/Alerts/Notifier/Local.pm` module, using [the Local.pm.sample](https://github.com/skx/purple/blob/master/lib/Alerts/Notifier/Local.pm.sample) module as an example.  The `bin/alerter` script will invoke that method if it is present, if it is not then alerts in the `raised` state will merely be dumped ot the console.
+
+The `bin/alert` script handles the state-transitions as you would expect:
 
 * Select all alerts which have a raise-time of "now".
-    * Send the notification.
-    * Change the state to "raised".
+    * Send the a notification for each alert-event.
+    * Change the state to "`raised`".
 
-* Select all alerts which are in state raised.
+* Select all alerts which are in state `raised`.
    * Re-notify if it has been over a minute since the last notification.
 
 * Delete all alerts in a cleared state.
