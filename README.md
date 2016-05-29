@@ -84,9 +84,7 @@ As you might expect the `raise` field is pretty significant.  Expected values ar
 
 There is no built-in facility for sending text-messages, sending pushover notifications, or similar.  Instead the default alerting behaviour is to simply dump the details of the raised/re-raised alert to the console.
 
-It is assumed you will have your own local facility for sending the alerts, and to implement it you just need to override the `notify` subroutine in the `lib/Alerts/Notifier/Local.pm` module.
-
-The alerter has a nice clean setup, which makes adding this functionality, to suit your own needs, simple.  The alerter will poll the SQLite database when it runs (we recommend every minute):
+It is assumed you will have your own local facility for sending the alerts, and to implement it you just need to override the `notify` subroutine in the `lib/Alerts/Notifier/Local.pm` module.  The alerter will use that module/method if present, to generate the notifications.  Beyond that the alerter handles the state-transitions as you would expect:
 
 * Select all alerts which have a raise-time of "now".
     * Send the notification.
@@ -97,12 +95,10 @@ The alerter has a nice clean setup, which makes adding this functionality, to su
 
 * Delete all alerts in a cleared state.
 
-To actually raise, or re-raise, we just invoke the user-supplied callback.
-
 
 ## Installation
 
-Before you begin you'll almost certainly want to edit `lib/Alerts/Notifier/Local.pm` to ensure you have alerts generated.
+Before you begin you'll almost certainly want to edit `lib/Alerts/Notifier/Local.pm` to ensure your alerts are sent _somewhere_ useful.
 
 * Ensure that the web-UI & submission service is launched, and restarted on failure, by executing `./run`.
 
