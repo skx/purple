@@ -5,17 +5,20 @@ use strict;
 use warnings;
 
 use Dancer;
+use Dancer::Plugin::Auth::Extensible;
+
 
 set show_errors => 1;
 use Alerts;
 
+
 # Show web-interface.
-get '/' => sub {
+get '/' => require_login sub {
     send_file 'index.html';
 };
 
 # Clear an event.
-get '/clear/:id' => sub {
+get '/clear/:id' => require_login sub {
     my $tmp = Alerts->new();
     my $out = $tmp->clearEvent( params->{ 'id' } );
     return ( redirect '/' );

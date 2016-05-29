@@ -1,3 +1,12 @@
+session: simple
+plugins:
+        Auth::Extensible:
+            realms:
+                config:
+                    provider: Config
+                    users:
+                        - user: steve
+                          pass: secret!
 plack_middlewares:
   -
     - ReverseProxy
