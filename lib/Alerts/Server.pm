@@ -33,12 +33,27 @@ post '/events' => sub {
     my $data = request()->body();
     my $json = from_json($data);
 
-    # The source IP of the submitting-client.
-    $json->{'source'} = request()->address();
+    if ( ref $json eq "ARRAY" )
+    {
+        foreach my $obj ( @{ $json } )
+        {
+            # The source IP of the submitting-client.
+            $obj->{ 'source' } = request()->address();
 
-    my $e = Alerts->new();
-    $e->addEvent( %{ $json } );
+            my $e = Alerts->new();
+            $e->addEvent( %{ $obj } );
+        }
+    }
+    else
+    {
+        # Just a hash - single alert
 
+        # The source IP of the submitting-client.
+        $json->{ 'source' } = request()->address();
+
+        my $e = Alerts->new();
+        $e->addEvent( %{ $json } );
+    }
     return "OK";
 };
 
