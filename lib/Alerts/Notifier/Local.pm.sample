@@ -31,6 +31,16 @@ sub notify
     my $tmp   = Alerts->new();
     my $event = $tmp->getEvent($id);
 
+    #
+    # Special case - only notify ONCE if the ID contains `once`.
+    #
+    # On initial notification we have `reason: raise`, on subsequent
+    # notifications we have `reason: reraise`, so we can differentiate
+    # them successfully.
+    #
+    return if ( ( $reason =~ /reraise/i ) &&
+                ( $event->{'id'} =~ /\.once/i ) );
+
     # Build up a subject
     my $subject = "$reason: [$event->{'id'}] - $event->{'subject'}";
 
