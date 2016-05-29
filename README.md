@@ -101,10 +101,10 @@ It is assumed you will have your own local facility for sending the alerts, and 
 Before you begin you'll almost certainly want to edit `lib/Alerts/Notifier/Local.pm` to ensure your alerts are sent _somewhere_ useful.
 
 * Ensure that the web-UI & submission service is launched, and restarted on failure, by executing `./run`.
-
+   * There is a sample systemd unit-file located in `examples/`.
 * Configure Apache/nginx to proxy https://alert.example.com/ to `localhost:5151`.
-
 * Ensure that the `./bin/alerter` daemon is launched, and restarted on failure.
+   * There is a sample systemd unit-file located in `examples/`.
 
 
 
