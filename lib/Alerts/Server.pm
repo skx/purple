@@ -33,6 +33,9 @@ post '/events' => sub {
     my $data = request()->body();
     my $json = from_json($data);
 
+    # The source IP of the submitting-client.
+    $json->{'source'} = request()->address();
+
     my $e = Alerts->new();
     $e->addEvent( %{ $json } );
 

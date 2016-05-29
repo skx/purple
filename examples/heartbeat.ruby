@@ -55,7 +55,6 @@ data['detail']  = "<p><tt>#{hostname}</tt> might be down!</p>"
 data['id']      = "heartbeat.once";
 data['raise']   = "+5m";
 data['raise']   = "clear" if ( clear )
-data['source']  = hostname
 data['subject'] = "The heartbeat wasn't sent for #{hostname}"
 
 
