@@ -116,14 +116,7 @@ The `bin/alert` script handles the state-transitions as you would expect:
 
 ## Installation
 
-Before you begin you'll want to populate the notification-module `lib/Alerts/Notifier/Local.pm`, to ensure your alerts are actually sent somewhere.  Otherwise installation should be straight-forward:
-
-
-* Ensure that the web-UI & submission service is launched, and restarted on failure, by executing `./run`.
-   * There is a sample `systemd` unit-file located in `examples/`.
-* Configure Apache/nginx to proxy https://alert.example.com/ to `localhost:5151`, which is the default port the service operates upon.
-* Ensure that the `./bin/alerter` daemon is launched, and restarted on failure.
-   * There is a sample systemd unit-file located in `examples/`.
+Please see the [installation file](INSTALL.md).
 
 
 
