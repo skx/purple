@@ -1,4 +1,19 @@
 
+=head1 NAME
+
+Alerts::Server - Dancer Web-UI.
+
+=head1 DESCRIPTION
+
+This module implements our HTTP-interface, which serves two purposes:
+
+* Handle the submission of JSON-encoded events
+
+* Handle the web-based user interface.
+
+
+=cut
+
 package Alerts::Server;
 
 use strict;
@@ -12,24 +27,27 @@ set show_errors => 1;
 use Alerts;
 
 
-# Show web-interface.
+# Show the web-interface.
 get '/' => require_login sub {
     send_file 'index.html';
 };
 
-# Show the login-page
+
+# Show the login-page.
 get '/login' => sub {
     send_file 'login.html';
 };
 
-# Clear an event.
+
+# Clear an event which is in the raised/pending state.
 get '/clear/:id' => require_login sub {
     my $tmp = Alerts->new();
     my $out = $tmp->clearEvent( params->{ 'id' } );
     return ( redirect '/' );
 };
 
-# Get all events as JSON.
+
+# Retrieve all events as JSON, invoked by AJAX for the web-ui.
 get '/events' => sub {
     my $tmp = Alerts->new();
     my $out = $tmp->getEvents();

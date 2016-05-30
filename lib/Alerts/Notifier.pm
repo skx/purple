@@ -52,6 +52,15 @@ use warnings;
 
 use Singleton::DBI;
 
+
+=head2 new
+
+Constructor.
+
+We expect a DBI handle, and a call-back function to be passed to our constructor.
+
+=cut
+
 sub new
 {
     my ( $class, %params ) = @_;
@@ -86,6 +95,8 @@ sub reap
 If there are any alerts which should be raised for the first time,
 then change their state to `raised` (rather than `pending` which they
 would begin in, and issue the alert.
+
+Alerts are notified by invoking the callback submitted in our constructor.
 
 =cut
 
@@ -125,6 +136,8 @@ a minute ago, then notify anew.
 
 The only parameter is the period between re-raising previously-raised alerts,
 which defaults to 60 seconds if not specified.
+
+Alerts are notified by invoking the callback submitted in our constructor.
 
 =cut
 
