@@ -1,21 +1,18 @@
 # Purple
 
-Purple is an event/alert manager which allows central collection and distribution of "alerts".
-
-In short purple allows tracking the state of a number of pending alerts, raising them on demand.  For example a trivial `heartbeat` alert might be implemented by sending a message every minute:
+Purple is an event/alert manager which allows central collection and distribution of "alerts".  In short purple allows tracking the state of a number of alerts, raising them on demand.  For example a trivial `heartbeat` alert might be implemented by sending a message every minute:
 
 * "Raise an alert if you don't hear from me in 5 minutes".
 
-If all is well this message will be sent once a minute, and no alert is raised.  If the remote host stops sending that regular heartbeat message then a notification will be generated 5 minutes after the final one was received.
-
+If a client-machine sends this message every 60 seconds (or even more frequently!) all is OK.  When the messages cease an alert will be raised five minutes later.
 
 
 
 ## About Alerts
 
-Alerts are submitted by making a HTTP POST-request to the purple-server, with a JSON-body.
+Alerts are submitted by making a HTTP POST-request to the purple-server, with a JSON-payload of a [number of fields](#submissions).
 
-When a new POST request is received it will be transformed into an alert, which will be saved in the database.  This alert might be a new one, or it might contain an update of an existing alert.
+When a new POST request is received it will be transformed into an alert, which will be saved in the database if it is new, if it is an alert which has previously been seen then the existing alert-object will be updated.
 
 Alerts have three states:
 
@@ -26,36 +23,37 @@ Alerts have three states:
 * Cleared
    * Alerts which are cleared have previously been raised and closed manually, alerts in the cleared-state are reaped over time.
 
+To handle uniqueness alerts are keyed upon the user-submitted `id` field, along with the source IP from which the submission was received.  This allows you to send updates from multiple hosts named `heartbeat` without any confusion, for example.
+
 
 ## Architecture
 
-The purple-server presents a HTTP server which accepts incoming alert-submissions, as well as providing a simple user-interface to list the various raised, pending, or cleared alerts.
+The purple-server presents a HTTP server which accepts incoming alert-submissions, as well as providing a simple web-based user-interface to list the various raised, pending, or cleared alerts.
 
 In addition to the core-server there is a second process which constantly scans the database (i.e. SQLite-file) to handle the state-transitions and raising of alerts.
 
-
-* The purple-server received alerts.
-   * It stores those incoming alerts into the database.
+* The purple-server handles incoming HTTP-requests.
+   * It stores incoming alerts in an SQLite database.
    * It also presents a web interface to the alert-events.
 * The alerter reads that database to send out notifications.
    * If an alert is in the `cleared` state it is removed.
-   * If an alert is in the `pending` state, and the raise-time has passed it is notified, and moved the `raised` state.
-   * If an alert is in the `raised` state, and a notification was made more than a minute ago it is re-notified.
+   * If an alert is in the `pending` state, it is moved into the `raised` state, and a notification is generated.
+   * If an alert is in the `raised` state, and a notification was made more than a minute ago another notification is generated.
 
 
 ### Differences between MauveAlert
 
-If you're familiar with the mauvealert project, which inspired this, then the following are the largest differences:
+If you're familiar with mauvealert, which inspired this project, then the following are the largest differences:
 
 * Alerts in purple are submitted via HTTP-POST requests containing JSON-bodies, rather than `protobuf` bodies over a UDP transport.
 * There is no policy-routing.
    * All alerts are notified in the same way, rather than being conditional on the alert, the time of day, etc.
-* In purple alerts have no urgency settings, they're all treated at the same priority-leve.
+* In purple alerts have no urgency settings, they're all treated at the same priority-level.
 * The AJAX/web interface in purple is prettier.
 * purple has no notion of supression.
-   * But because alerts are processed every 60 seconds via `bin/alerter` you could fake it by changing that timeout to 3 minutes, or similar.
 * In purple all raised alerts are re-notified every 60 seconds, rather than having any back-off.
    * You can make alerts one-shot by adding a `.once` suffix to the ID.
+   * They'll stay in the web user-interface but the notification will only fire once.
 * In purple you must write your own notification-class to deliver alerts.
    * Although we do include an example which generates emails.
 * In purple you cannot notify when an alert has cleared.
@@ -73,7 +71,6 @@ to the http://1.2.3.4:port/events end-point.  Expected fields are:
 |detail     | Human-readable (expanded) description of the alert-event. |
 |raise      | When this alert should be raised.                         |
 
-To handle uniqueness alerts are keyed upon the user-submitted `id` field, along with the source IP from which the submission was received.
 
 As an example the following is a heartbeat alert.  Five minutes after the last update sent by this we'll receive an alert-notification:
 
@@ -85,9 +82,9 @@ As an example the following is a heartbeat alert.  Five minutes after the last u
        "raise"   : "+5m",
      }
 
-Before the `5m` timeout has been reached the alert will be in the `pending` state, after that period has passed the alert will be moved into the `raised` state.
+Before the `5m` timeout has been reached the alert will be in the `pending` state and will be visible in the web user-interface.  Five minutes after the last submission the alert will be moved into the `raised` state.
 
-As you might expect the `raise` field is pretty significant.  Expected values are:
+As you might expect the `raise` field is pretty significant.  Permissable values include:
 
 |`raise`| Purpose                                                 |
 |-------|---------------------------------------------------------|
@@ -97,28 +94,29 @@ As you might expect the `raise` field is pretty significant.  Expected values ar
 | `now` | Raise immediately.                                      |
 |`clear`| Clear the alert immediately.                            |
 
+> **NOTE**: Submitting an update which misses any of the expected fields is an error.
+
+
 
 ## Notifications
 
 There is no built-in facility for sending text-messages, sending pushover notifications, or similar.  Instead the default alerting behaviour is to simply dump the details of the raised/re-raised alert to the console.
 
-It is assumed you will have your own local preferred mechanism for sending the alerts, be it SMS, PushOver, email, or something else.  To implement your notification method you'll need to override the `notify` subroutine in the `lib/Alerts/Notifier/Local.pm` module, using [the Local.pm.sample](https://github.com/skx/purple/blob/master/lib/Alerts/Notifier/Local.pm.sample) module as an example.  The `bin/alerter` script will invoke that method if it is present, if it is not then alerts in the `raised` state will merely be dumped ot the console.
+It is assumed you will have your own local preferred mechanism for sending the alerts, be it SMS, PushOver, email, or something else.  To implement your notification method you'll need to override the `notify` subroutine in the `lib/Alerts/Notifier/Local.pm` module, using [the sample Local.pm modules](https://github.com/skx/purple/blob/master/lib/Alerts/Notifier/) as examples.  The `bin/alerter` script will invoke that method if it is present, if it is not then alerts in the `raised` state will merely be dumped ot the console.
 
 The `bin/alert` script handles the state-transitions as you would expect:
 
 * Select all alerts which have a raise-time of "now".
     * Send the a notification for each alert-event.
     * Change the state to "`raised`".
-
 * Select all alerts which are in state `raised`.
    * Re-notify if it has been over a minute since the last notification.
-
 * Delete all alerts in a cleared state.
 
 
 ## Installation
 
-Before you begin you'll almost certainly want to populate the notification-module `lib/Alerts/Notifier/Local.pm`, to ensure your alerts are actually sent somewhere.  Otherwise installation should be straight-forward:
+Before you begin you'll want to populate the notification-module `lib/Alerts/Notifier/Local.pm`, to ensure your alerts are actually sent somewhere.  Otherwise installation should be straight-forward:
 
 
 * Ensure that the web-UI & submission service is launched, and restarted on failure, by executing `./run`.
