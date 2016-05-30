@@ -38,6 +38,28 @@ get '/login' => sub {
     send_file 'login.html';
 };
 
+post '/login' => sub {
+        my ($success, $realm) = authenticate_user(
+            params->{username}, params->{password}
+        );
+        if ($success) {
+            session logged_in_user => params->{username};
+            session logged_in_user_realm => $realm;
+            # other code here
+            redirect '/';
+        } else {
+            # authentication failed
+            send_file 'login.html';
+        }
+};
+
+# Handle a logout
+any '/logout' => sub {
+    session->destroy;
+    session->flush;
+    send_file 'logout.html';
+};
+
 
 # Clear an event which is in the raised/pending state.
 get '/clear/:id' => require_login sub {

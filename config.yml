@@ -2,6 +2,7 @@ session: simple
 plugins:
         Auth::Extensible:
             no_default_pages: 1
+            no_login_handler: 1
             realms:
                 config:
                     provider: Config
