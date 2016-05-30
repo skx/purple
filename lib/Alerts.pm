@@ -1,7 +1,7 @@
 
 =head1 NAME
 
-Alerts - Handle our alerts.
+Alerts - Store/Retrieve alerts.
 
 =head1 SYNOPSIS
 
@@ -19,8 +19,26 @@ Alerts - Handle our alerts.
 
 =head1 DESCRIPTION
 
-This module contains code for working with an alert-event, or
-collection of the same.
+This module contains code for storing a new alert, or retrieving existing
+ones.
+
+Alerts are nothing more than simple hashes with a number of fields:
+
+=over 8
+
+=item id
+The ID of an alert is a human-chosen string such as "website", "heartbeat", etc.
+
+=item raise
+This is the most significant field, it determines when an alert is to be raised.  Valid values are "now", "clear", "+5m", "+1s", etc.
+
+=item subject
+The one-line summary of the alert.
+
+=item detail
+An expanded description of the alert.
+
+=back
 
 =cut
 
@@ -75,6 +93,10 @@ The time to raise the event (e.g. "5m", "4h", "now", or "clear" to
 actually clear the event post-raise).
 
 =back
+
+Missing any parameter will result in a failure.
+
+The return value will be the identifier of the new/updated alert.
 
 =cut
 
@@ -131,9 +153,12 @@ sub addEvent
     return ($id);
 }
 
+
 =head2 getEvent
 
-Get the single, specified, event by ID.
+Get the single event by ID, if it exists.
+
+The return value will be a hash of all data.
 
 =cut
 
