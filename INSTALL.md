@@ -17,7 +17,7 @@ the two provided samples:
    * Sends alerts via email.
 * `Local.pm.pushover`
    * POSTs messages to a mobile phone via [pushover](http://pushover.net/)
-   * NOTE: YOu need to update that script to contain your credentials.
+   * NOTE: You need to update that script to contain your credentials.
 
 
 
