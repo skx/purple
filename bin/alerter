@@ -27,13 +27,28 @@ use warnings;
 use Alerts;
 use Alerts::Notifier;
 
+use Getopt::Long;
+
+
+#
+#  Allow --verbose to be specified
+#
+my %CONFIG;
+$CONFIG{ 'period' } = 60;
+
+exit
+  if (
+       !GetOptions( "verbose",  \$CONFIG{ 'verbose' },
+                    "period=i", \$CONFIG{ 'period' } ) );
 
 
 
 #
 #  Create the helper.
 #
-my $alerter = Alerts::Notifier->new( notify => \&my_notify );
+my $alerter = Alerts::Notifier->new( notify  => \&my_notify,
+                                     verbose => $CONFIG{ 'verbose' },
+                                     delay   => ( $CONFIG{ 'period' } - 1 ) );
 
 
 
@@ -60,10 +75,10 @@ while (1)
     my $diff = $end - $start;
 
     # If less than a minute pad ourselves
-    if ( $diff < 60 )
+    if ( $diff < $CONFIG{ 'period' } )
     {
-        my $delay = 60 - $diff;
-        print "Sleeping for $delay seconds\n";
+        my $delay = $CONFIG{ 'period' } - $diff;
+        $CONFIG{ 'verbose' } && print "Sleeping for $delay seconds\n";
         sleep($delay);
     }
 

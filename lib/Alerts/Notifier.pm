@@ -68,6 +68,13 @@ sub new
     bless( $self, $class );
     $self->{ 'dbi' }    = Singleton::DBI->instance();
     $self->{ 'notify' } = $params{ 'notify' };
+
+    # User can specify delay.
+    $self->{ 'delay' } = 59;
+    $self->{ 'delay' } = $params{ 'delay' } if ( $params{ 'delay' } );
+
+    # We'll `print` output if verbose is set
+    $self->{ 'verbose' } = 1 if ( $params{ 'verbose' } );
     return $self;
 }
 
@@ -115,6 +122,8 @@ sub notifyNew
     $sql->bind_columns( undef, \$id );
     while ( $sql->fetch() )
     {
+        # Show what we're doing, if we're running verbosely.
+        $self->{ 'verbose' } && print "raising for alert ID: $id\n";
 
         # Raise the alert, via the call-back function.
         $self->{ 'notify' }( $id, "raise" );
@@ -148,10 +157,10 @@ sub reNotify
     my $dbh = $self->{ 'dbi' };
 
     # Default delay
-    $delay = 59 if ( !$delay );
+    $delay = $self->{ 'delay' } if ( !$delay );
 
     # If delay is not a number then default it, again.
-    $delay = 59 unless ( $delay =~ /^([0-9]+)$/ );
+    $delay = $self->{ 'delay' } unless ( $delay =~ /^([0-9]+)$/ );
 
     #
     # Look for raised alerts we need to re-notify.
@@ -165,6 +174,9 @@ sub reNotify
 
     while ( $sql->fetch() )
     {
+
+        # Show what we're doing, if we're running verbosely.
+        $self->{ 'verbose' } && print "reraising for alert ID: $id\n";
 
         # Re-raise the alert, via the call-back function.
         $self->{ 'notify' }( $id, "reraise" );
