@@ -39,18 +39,21 @@ get '/login' => sub {
 };
 
 post '/login' => sub {
-        my ($success, $realm) = authenticate_user(
-            params->{username}, params->{password}
-        );
-        if ($success) {
-            session logged_in_user => params->{username};
-            session logged_in_user_realm => $realm;
-            # other code here
-            redirect '/';
-        } else {
-            # authentication failed
-            send_file 'login.html';
-        }
+    my ( $success, $realm ) =
+      authenticate_user( params->{ username }, params->{ password } );
+    if ($success)
+    {
+        session logged_in_user       => params->{ username };
+        session logged_in_user_realm => $realm;
+
+        # other code here
+        redirect '/';
+    }
+    else
+    {
+        # authentication failed
+        send_file 'login.html';
+    }
 };
 
 # Handle a logout
