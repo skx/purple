@@ -140,17 +140,43 @@ sub addEvent
         $raise = -1;
     }
 
-    my $sql = $dbh->prepare(
-        "INSERT OR REPLACE INTO Events( i, id, source, subject, detail, raise_at ) VALUES( ( SELECT i FROM Events WHERE id=? AND source=?) , ?, ?, ? , ?, ? )"
-    );
-    $sql->execute( $id, $src, $id, $src, $subject, $detail, $raise );
+    #
+    #  Is this event already present?
+    #
+    my $sql = $dbh->prepare( "SELECT i FROM Events WHERE id=? AND source=?" );
+    $sql->execute( $id, $src );
+    my ( $found ) = $sql->fetchrow_array();
     $sql->finish();
 
     #
-    #  The ID of the event we've updated.
+    #  If we found it then we update the raise time, the subject, the
+    # detail and NOTHING ELSE.
     #
-    $id = $dbh->last_insert_id( undef, undef, undef, undef );
-    return ($id);
+    if ( $found )
+    {
+        $sql = $dbh->prepare( "UPDATE Events SET raise_at=?, subject=?, detail=?  WHERE i=?" );
+        $sql->execute( $raise, $subject, $detail, $found );
+        $sql->finish();
+
+        return( $found );
+    }
+    else
+    {
+        #
+        #  Insert a new record.
+        #
+        my $sql = $dbh->prepare(
+                                "INSERT INTO Events( id, source, subject, detail, raise_at ) VALUES( ?, ?, ?, ?, ? )"
+    );
+        $sql->execute( $id, $src, $subject, $detail, $raise );
+        $sql->finish();
+
+        #
+        #  The ID of the event we've updated.
+        #
+        $id = $dbh->last_insert_id( undef, undef, undef, undef );
+        return ($id);
+    }
 }
 
 
