@@ -7,7 +7,7 @@ To get started you'll need to install the dependencies:
             libtime-modules-perl libtime-parsedate-perl
 
 Once installed you need to consider how events will be delivered.  By default
-the alerting script (`bin/alerter`) will just dump messages to the console.
+the alerting script (`bin/purple-alerter`) will just dump messages to the console.
 
 To implement your custom notification system you'll want to populate the
 file `lib/lib/Alerts/Notifier/Local.pm`, and you can draw inspiration from
@@ -36,7 +36,7 @@ on failure:
         ./run
 
         # The alerter
-        ./bin/alerter [-v]
+        ./bin/purple-alerter [-v]
 
 Both of these can be launched under the control of systemd, via the files provided
 beneath `examples/`.
