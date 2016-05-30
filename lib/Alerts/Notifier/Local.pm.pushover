@@ -1,0 +1,123 @@
+
+=head1 NAME
+
+Alert::Notifier::Local - Issue notifications for raised alerts.
+
+=head1 SYNOPSIS
+
+      use strict;
+      use warnings;
+
+      use Alert::Notifier::Local;
+
+      my $tmp = Alert::Notifier::Local->new();
+      $tmp->notify( $event );
+
+=cut
+
+=head1 DESCRIPTION
+
+This module is responsible for issuing a notification upon a raised event,
+and is invoked by the C<bin/notify> script if it can be successfully loaded.
+
+If there is no L<Alert::Notifier::Local> module discovered at run-time then
+the default notification method is merely to dump the alert to the console.
+
+This module sends a notifiction to a mobile phone application via the
+PushOver service, available at https://pushover.net/
+
+
+=cut
+
+
+=head1 METHODS
+
+Now follows documentation on the available methods.
+
+=cut
+
+
+package Alerts::Notifier::Local;
+
+
+use LWP::UserAgent;
+
+
+=head2 new
+
+Constructor.
+
+No arguments are expected or used.
+
+=cut
+
+sub new
+{
+    my ( $class, %params ) = @_;
+    my $self = {};
+    bless( $self, $class );
+    return $self;
+}
+
+
+=head2 notify
+
+This method is invoked for each alert which is to be notified.
+
+This sample module sends the message to a users' mobile phone via
+the pushover service.
+
+Parameters are:
+
+=over 8
+
+=item id
+The ID of the alert, which can be used to fetch the details.
+
+=item reason
+A string describing whether this alert is being raised ("raise"), or whether the notification is old and is being re-raised ("reraise").
+
+=back
+
+=cut
+
+sub notify
+{
+    my ( $self, $id, $reason ) = (@_);
+
+    # Get the alert-data
+    my $tmp   = Alerts->new();
+    my $event = $tmp->getEvent($id);
+
+    #
+    # Special case - only notify ONCE if the ID contains `once`.
+    #
+    # On initial notification we have `reason: raise`, on subsequent
+    # notifications we have `reason: reraise`, so we can differentiate
+    # them successfully.
+    #
+    return
+      if ( ( $reason =~ /reraise/i ) &&
+           ( $event->{ 'id' } =~ /\.once/i ) );
+
+
+    # Build up a subject.
+    my $subject = "$reason: [$event->{'id'}] - $event->{'subject'}";
+
+    # The detailed-body of the alert.
+    my $msg = $event->{'detail'};
+
+    # Create a user-agent.
+    my $x = LWP::UserAgent->new();
+
+    # Post the message to pushover.net
+    $x->post( "https://api.pushover.net/1/messages.json", [
+                "token" => "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                "user" =>  "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                "message" => $msg,
+                title => $subject,
+    ]);
+}
+
+
+1;
