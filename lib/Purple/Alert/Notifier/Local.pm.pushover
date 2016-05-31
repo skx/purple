@@ -1,7 +1,7 @@
 
 =head1 NAME
 
-Alert::Notifier::Local - Issue notifications for raised alerts.
+Purple::Alert::Notifier::Local - Issue notifications for raised alerts.
 
 =head1 SYNOPSIS
 
@@ -37,7 +37,7 @@ Now follows documentation on the available methods.
 =cut
 
 
-package Alerts::Notifier::Local;
+package Purple::Alert::Notifier::Local;
 
 
 use LWP::UserAgent;
