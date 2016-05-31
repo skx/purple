@@ -39,7 +39,7 @@ Now follows documentation on the available methods.
 
 package Purple::Alert::Notifier::Local;
 
-
+use Purple::Alerts;
 use LWP::UserAgent;
 
 
@@ -86,7 +86,7 @@ sub notify
     my ( $self, $id, $reason ) = (@_);
 
     # Get the alert-data
-    my $tmp   = Alerts->new();
+    my $tmp   = Purple::Alerts->new();
     my $event = $tmp->getEvent($id);
 
     #
