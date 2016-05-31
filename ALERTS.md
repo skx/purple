@@ -6,7 +6,47 @@ IDs are human readable labels for the alerts, and they don't need to be globally
 
 Example alert IDs might be `disk-full`, `heartbeat`, `unread-mail-foo.com` and `unread-mail-bar.com`.
 
-## Raising an Alert
+
+
+## Submitting Alerts
+
+Submissions are expected to be JSON-encoded POST payloads, sent
+to the http://1.2.3.4:port/events end-point.  The required fields are:
+
+|Field Name | Purpose                                                   |
+|-----------|-----------------------------------------------------------|
+|id         | Name of the alert                                         |
+|subject    | Human-readable description of the alert-event.            |
+|detail     | Human-readable (expanded) description of the alert-event. |
+|raise      | When this alert should be raised.                         |
+
+As an example the following is a heartbeat alert.  Five minutes after the last update sent by this we'll receive an alert-notification:
+
+
+     {
+       "id"      : "heartbeat"
+       "subject" : "The heartbeat wasn't sent for deagol.lan",
+       "detail"  : "<p>This indicates that <tt>deagol.lan</tt> might be down!</p>",
+       "raise"   : "+5m",
+     }
+
+Before the `5m` timeout has been reached the alert will be in the `pending` state and will be visible in the web user-interface.  Five minutes after the last submission the alert will be moved into the `raised` state, and a notification will be generated.
+
+As you might expect the `raise` field is pretty significant.  Permissable values include:
+
+|`raise`| Purpose                                                 |
+|-------|---------------------------------------------------------|
+|`12345`| Raise at the given number of seconds past the epoch.    |
+| `+5m` | Raise in 5 minutes.                                     |
+| `+5h` | Raise in 5 hours.                                       |
+| `now` | Raise immediately.                                      |
+|`clear`| Clear the alert immediately.                            |
+
+> **NOTE**: Submitting an update which misses any of the expected fields is an error.
+
+
+
+## Explicitly Raising Alerts
 
 To raise an alert send a JSON message with the `raise` field set to `now`:
 
@@ -20,7 +60,7 @@ To raise an alert send a JSON message with the `raise` field set to `now`:
 This alert will be immediately raised, and the notifications will repeat until the alert is cleared - either via a clear-submission, or via the Web user-interface.
 
 
-## Clearing an Alert
+## Explicitly Clearing Alerts
 
 To clear an existing alert send a JSON message with the `raise` field set to `clear`:
 
@@ -43,7 +83,7 @@ If you're writing an alert to tell you that a website is down you can bundle up 
     v['detail']  = "<p>The fetch failed.</p>"
     v['id']      = "web-example.com"
 
-    if  site_alive
+    if site_alive
        v['raise'] = 'clear'
     else
        v['raise'] = 'now'
