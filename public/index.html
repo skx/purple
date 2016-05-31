@@ -60,25 +60,17 @@
           d = parseFloat(d);
           d = new Date( d  );
 
-      $("#" + val['status'] + "_alerts").find('tbody')
-          .append($('<tr>')
-        .append($('<td>')
-          .append(val['status'])
-          )
-          .append($('<td>')
-          .append(val['source'])
-          )
-          .append($('<td>')
-          .append(val['subject'])
-          )
-          .append($('<td>')
-          .append(d)
-          )
-          .append($('<td>')
-          .append("<a href=\"/clear/" + (val['i']) + "\">clear</a>")
-          )
-          );
-          // Add the detail - hidden by default
+          // id | source | subject | last notified | action
+          var t = "<tr><td>" + val['i'] + "</td>";
+          t += "<td>" + val['source'] + "</td>";
+          t += "<td>" + val['subject'] + "</td>";
+          t += "<td>" + d  + "</td>";
+          t += "<td><a href=\"/clear/" + (val['i']) + "\">clear</a></td>"
+
+          // Add the alert
+          $("#" + val['status'] + "_alerts").find('tbody').append(t)
+
+          // Add the details.
           $("#" + val['status'] + "_alerts").find('tbody')
           .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
        }
@@ -88,50 +80,31 @@
           d = parseFloat(d);
           d = new Date( d  );
 
+          // id | source | subject | last notified | action
+          var t = "<tr><td>" + val['i'] + "</td>";
+          t += "<td>" + val['source'] + "</td>";
+          t += "<td>" + val['subject'] + "</td>";
+          t += "<td>" + d  + "</td>";
+          t += "<td><a href=\"/clear/" + (val['i']) + "\">clear</a></td>"
 
-          $("#" + val['status'] + "_alerts").find('tbody')
-          .append($('<tr>')
-        .append($('<td>')
-          .append(val['status'])
-          )
-          .append($('<td>')
-          .append(val['source'])
-          )
-          .append($('<td>')
-          .append(val['subject'])
-          )
-          .append($('<td>')
-          .append(d)
-          )
-          .append($('<td>')
-          .append("<a href=\"/clear/" + (val['i']) + "\">clear</a>")
-          )
-          );
+          // Add the alert
+          $("#" + val['status'] + "_alerts").find('tbody').append(t)
 
-
-          // Add the detail - hidden by default
+          // Add the details.
           $("#" + val['status'] + "_alerts").find('tbody')
           .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
       }
       if ( status == "cleared" ) {
 
-        $("#" + val['status'] + "_alerts").find('tbody')
-          .append($('<tr>')
-        .append($('<td>')
-          .append(val['status'])
-          )
-          .append($('<td>')
-          .append(val['source'])
-          )
-          .append($('<td>')
-          .append(val['subject'])
-          )
-          .append($('<td>')
-          .append("<a href=\"/clear/" + (val['i']) + "\">clear</a>")
-          )
-          );
+          // id | source | subject | action
+          var t = "<tr><td>" + val['i'] + "</td>";
+          t += "<td>" + val['source'] + "</td>";
+          t += "<td>" + val['subject'] + "</td>";
 
-          // Add the detail - hidden by default
+          // Add the alert
+          $("#" + val['status'] + "_alerts").find('tbody').append(t)
+
+          // Add the details.
           $("#" + val['status'] + "_alerts").find('tbody')
           .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
        }
@@ -181,19 +154,19 @@
         <div id="raised" class="tab-pane fade in active">
           <p>&nbsp;</p>
           <table id="raised_alerts" class="table table-striped table-hover table-bordered table-condensed" >
-            <tr><th>Status</th><th>Source</th><th>Subject</th><th>Last Notified</th><th>Actions</th></tr>
+            <tr><th>#</th><th>Source</th><th>Subject</th><th>Last Notified At</th><th>Actions</th></tr>
           </table>
         </div>
         <div id="pending" class="tab-pane fade">
           <p>&nbsp;</p>
           <table id="pending_alerts" class="table table-striped table-hover table-bordered table-condensed" >
-            <tr><th>Status</th><th>Source</th><th>Subject</th><th>Raise Time</th><th>Actions</th></tr>
+            <tr><th>#</th><th>Source</th><th>Subject</th><th>Raise Time</th><th>Actions</th></tr>
           </table>
         </div>
         <div id="cleared" class="tab-pane fade">
           <p>&nbsp;</p>
           <table id="cleared_alerts" class="table table-striped table-hover table-bordered table-condensed" >
-            <tr><th>Status</th><th>Source</th><th>Subject</th><th>Actions</th></tr>
+            <tr><th>#</th><th>Source</th><th>Subject</th></tr>
           </table>
         </div>
       </div>
