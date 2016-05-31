@@ -1,20 +1,23 @@
 
 =head1 NAME
 
-Alerts::Server - Dancer Web-UI.
+Purple::Server - Dancer Web-UI.
 
 =head1 DESCRIPTION
 
 This module implements our HTTP-interface, which serves two purposes:
 
-* Handle the submission of JSON-encoded events
+=over 8
 
-* Handle the web-based user interface.
+=item Handle the submission of JSON-encoded events
 
+=item  Handle the web-based user interface.
+
+=back
 
 =cut
 
-package Alerts::Server;
+package Purple::Server;
 
 use strict;
 use warnings;
@@ -24,7 +27,7 @@ use Dancer::Plugin::Auth::Extensible;
 
 
 set show_errors => 1;
-use Alerts;
+use Purple::Alerts;
 
 
 # Show the web-interface.
@@ -66,7 +69,7 @@ any '/logout' => sub {
 
 # Clear an event which is in the raised/pending state.
 get '/clear/:id' => require_login sub {
-    my $tmp = Alerts->new();
+    my $tmp = Purple::Alerts->new();
     my $out = $tmp->clearEvent( params->{ 'id' } );
     return ( redirect '/' );
 };
@@ -74,7 +77,7 @@ get '/clear/:id' => require_login sub {
 
 # Retrieve all events as JSON, invoked by AJAX for the web-ui.
 get '/events' => sub {
-    my $tmp = Alerts->new();
+    my $tmp = Purple::Alerts->new();
     my $out = $tmp->getEvents();
     return to_json($out);
 };
@@ -91,7 +94,7 @@ post '/events' => sub {
             # The source IP of the submitting-client.
             $obj->{ 'source' } = request()->address();
 
-            my $e = Alerts->new();
+            my $e = Purple::Alerts->new();
             $e->addEvent( %{ $obj } );
         }
     }
@@ -102,7 +105,7 @@ post '/events' => sub {
         # The source IP of the submitting-client.
         $json->{ 'source' } = request()->address();
 
-        my $e = Alerts->new();
+        my $e = Purple::Alerts->new();
         $e->addEvent( %{ $json } );
     }
     return "OK";

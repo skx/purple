@@ -61,7 +61,7 @@ Further details are available in the [alert guide](ALERTS.md).
 
 There is no built-in facility for sending text-messages, sending pushover notifications, or similar.  Instead the default alerting behaviour is to simply dump the details of the raised and re-raised alerts to the console.
 
-It is assumed you will have your own local preferred mechanism for sending the alerts, be it SMS, PushOver, email, or something else.  To implement your notification method you'll need to override the `notify` subroutine in the `lib/Purple/Alerts/Notifier/Local.pm` module, using [the sample Local.pm modules](https://github.com/skx/purple/blob/master/lib/Alerts/Notifier/) as examples.  The `bin/purple-alerter` script will invoke that method if it is present, if it is not then alerts in the `raised` state will merely be dumped ot the console.
+It is assumed you will have your own local preferred mechanism for sending the alerts, be it SMS, PushOver, email, or something else.  To implement your notification method you'll need to override the `notify` subroutine in the `lib/Purple/Alert/Notifier/Local.pm` module, using [the sample Local.pm modules](https://github.com/skx/purple/blob/master/lib/Purple/Alert/Notifier/) as examples.  The `bin/purple-alerter` script will invoke that method if it is present, if it is not then alerts in the `raised` state will merely be dumped ot the console.
 
 The `bin/alert` script handles the state-transitions as you would expect:
 

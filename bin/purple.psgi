@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Dancer;
-use Alerts::Server;
+use Purple::Server;
 use Plack::Builder;
 
 

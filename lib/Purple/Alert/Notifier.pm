@@ -1,14 +1,14 @@
 
 =head1 NAME
 
-Alerts::Notifier - Handle raising notifications.
+Purple::Alert::Notifier - Handle raising notifications.
 
 =head1 SYNOPSIS
 
       use strict;
       use warnings;
 
-      use Alerts::Notifier;
+      use Purple::Alert::Notifier;
 
       my $tmp = Alerts->new( notify => \&my_alerter );
 
@@ -45,7 +45,7 @@ Now follows documentation on the available methods.
 
 
 
-package Alerts::Notifier;
+package Purple::Alert::Notifier;
 
 use strict;
 use warnings;

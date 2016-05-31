@@ -1,16 +1,16 @@
 
 =head1 NAME
 
-Alerts - Store/Retrieve alerts.
+Purple::Alerts - Store/Retrieve alerts.
 
 =head1 SYNOPSIS
 
       use strict;
       use warnings;
 
-      use Alerts;
+      use Purple::Alerts;
 
-      my $tmp = Alerts->new();
+      my $tmp = Purple::Alerts->new();
       my $out = $tmp->getEvents();
 
       return to_json($out);
@@ -52,7 +52,7 @@ Now follows documentation on the available methods.
 use strict;
 use warnings;
 
-package Alerts;
+package Purple::Alerts;
 
 use Singleton::DBI;
 use Time::ParseDate;

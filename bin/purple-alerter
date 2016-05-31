@@ -24,8 +24,8 @@
 use strict;
 use warnings;
 
-use Alerts;
-use Alerts::Notifier;
+use Purple::Alerts;
+use Purple::Alert::Notifier;
 
 use Getopt::Long;
 
@@ -46,9 +46,9 @@ exit
 #
 #  Create the helper.
 #
-my $alerter = Alerts::Notifier->new( notify  => \&my_notify,
-                                     verbose => $CONFIG{ 'verbose' },
-                                     delay   => ( $CONFIG{ 'period' } - 1 ) );
+my $alerter = Purple::Alert::Notifier->new( notify  => \&my_notify,
+                                            verbose => $CONFIG{ 'verbose' },
+                                            delay   => ( $CONFIG{ 'period' } - 1 ) );
 
 
 
@@ -102,10 +102,10 @@ sub my_notify
     my ( $id, $reason ) = (@_);
 
     #
-    #  Has the user provided a Alerts::Notifier::Local module?
+    #  Has the user provided a Purple::Alert::Notifier::Local module?
     # if so use it.
     #
-    my $test = "use Alerts::Notifier::Local;";
+    my $test = "use Purple::Alert::Notifier::Local;";
 
     ## no critic (Eval)
     eval($test);
@@ -116,7 +116,7 @@ sub my_notify
     #
     if ( !$@ )
     {
-        my $tmp = Alerts::Notifier::Local->new();
+        my $tmp = Purple::Alert::Notifier::Local->new();
         $tmp->notify( $id, $reason );
         return;
     }
@@ -130,7 +130,7 @@ sub my_notify
     #
     # Get the data associated with this alert.
     #
-    my $tmp   = Alerts->new();
+    my $tmp   = Purple::Alerts->new();
     my $event = $tmp->getEvent($id);
 
     #

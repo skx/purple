@@ -10,7 +10,7 @@ Once installed you need to consider how events will be delivered.  By default
 the alerting script (`bin/purple-alerter`) will just dump messages to the console.
 
 To implement your custom notification system you'll want to populate the
-file `lib/lib/Alerts/Notifier/Local.pm`, and you can draw inspiration from
+file `lib/Purple/Alert/Notifier/Local.pm`, and you can draw inspiration from
 the two provided samples:
 
 * `Local.pm.email`
@@ -48,5 +48,4 @@ If you have a problem please do report an issue.
 
 
 Steve
--- 
-
+--

@@ -113,6 +113,6 @@ Assuming that this update is sent every 60 seconds the alert will raise three mi
 
 By default notifications are repeated for each alert in the raised-state.  These notifications repeat every 60 seconds.
 
-You can configure different back-off times if you wish, via your own `Purple::Alerts::Notifier::Local` module.  As an example of special handling the supplied samples only alert **once** if an ID ends in `.once` suffix.
+You can configure different back-off times if you wish, via your own `Purple::Alert::Notifier::Local` module.  As an example of special handling the supplied samples only alert **once** if an ID ends in `.once` suffix.
 
 This behaviour is useful if you're using an external service to deliver your alert-messages.  For example I use the [pushover](http://pushover.net/) service, and there is a facility there to repeat the notifications until they are read with the mobile phone application.  If I raise the alert once there, the phone will beep every minute - so there is no need to repeatedly send the message.
