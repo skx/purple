@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -22,6 +23,9 @@
       color: black;
       font-weight: bold;
       }
+      .click {
+        cursor: pointer;
+      }
     </style>
 
     <script type="text/javascript">
@@ -32,13 +36,14 @@
       }
       );
 
-      $( "table" ).delegate( "tr",  "click", function(  ) {
-      $(this).next().slideToggle(); } );
+      // clicking on the subject will toggle the details.
+      $( "table" ).delegate( "tr .click",  "click", function(  ) {
+          $(this).closest('tr').next('tr').toggle(); } );
       }
+
     </script>
     <script type="text/javascript">
       (function() {
-
 
       $.getJSON( "/events" , function( data ) {
       var h = {};
@@ -63,7 +68,7 @@
       // id | source | subject | last notified | action
       var t = "<tr><td>" + val['i'] + "</td>";
         t += "<td>" + val['source'] + "</td>";
-        t += "<td>" + val['subject'] + "</td>";
+        t += "<td class=\"click\">" + val['subject'] + "</td>";
         t += "<td>" + d  + "</td>";
         t += "<td><a href=\"/clear/" + (val['i']) + "\">clear</a></td>"
 
@@ -83,7 +88,7 @@
       // id | source | subject | last notified | action
       var t = "<tr><td>" + val['i'] + "</td>";
         t += "<td>" + val['source'] + "</td>";
-        t += "<td>" + val['subject'] + "</td>";
+        t += "<td class=\"click\">" + val['subject'] + "</td>";
         t += "<td>" + d  + "</td>";
         t += "<td><a href=\"/clear/" + (val['i']) + "\">clear</a></td>"
 
@@ -99,7 +104,7 @@
       // id | source | subject | action
       var t = "<tr><td>" + val['i'] + "</td>";
         t += "<td>" + val['source'] + "</td>";
-        t += "<td>" + val['subject'] + "</td>";
+        t += "<td class=\"click\">" + val['subject'] + "</td>";
 
         // Add the alert
         $("#" + val['status'] + "_alerts").find('tbody').append(t)
