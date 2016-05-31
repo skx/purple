@@ -9,8 +9,11 @@
     <script src="/js/jquery-2.2.4.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <style type="text/css">
-.steve-footer {
-      padding: 40px 0;
+      .wrapper {
+        margin-bottom: 100px;
+      }
+      .steve-footer {
+      margin-top: 70px;
       color: #999;
       background-color: #f9f9f9;
       border-top: 1px solid #e5e5e5;
@@ -18,9 +21,6 @@
       .steve-footer .nav-header {
       color: black;
       font-weight: bold;
-      }
-      .steve-footer p:last-child {
-      margin-bottom: 0;
       }
     </style>
 
@@ -33,7 +33,7 @@
       );
 
       $( "table" ).delegate( "tr",  "click", function(  ) {
-         $(this).next().slideToggle(); } );
+      $(this).next().slideToggle(); } );
       }
     </script>
     <script type="text/javascript">
@@ -56,122 +56,121 @@
       // "last notified at", or nothing depending on the type.
       if ( status == "raised" ) {
 
-          var d = Math.round( val['notified_at'] * 1000)
-          d = parseFloat(d);
-          d = new Date( d  );
+      var d = Math.round( val['notified_at'] * 1000)
+      d = parseFloat(d);
+      d = new Date( d  );
 
-          // id | source | subject | last notified | action
-          var t = "<tr><td>" + val['i'] + "</td>";
-          t += "<td>" + val['source'] + "</td>";
-          t += "<td>" + val['subject'] + "</td>";
-          t += "<td>" + d  + "</td>";
-          t += "<td><a href=\"/clear/" + (val['i']) + "\">clear</a></td>"
+      // id | source | subject | last notified | action
+      var t = "<tr><td>" + val['i'] + "</td>";
+        t += "<td>" + val['source'] + "</td>";
+        t += "<td>" + val['subject'] + "</td>";
+        t += "<td>" + d  + "</td>";
+        t += "<td><a href=\"/clear/" + (val['i']) + "\">clear</a></td>"
 
-          // Add the alert
-          $("#" + val['status'] + "_alerts").find('tbody').append(t)
+        // Add the alert
+        $("#" + val['status'] + "_alerts").find('tbody').append(t)
 
-          // Add the details.
-          $("#" + val['status'] + "_alerts").find('tbody')
-          .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
-       }
+        // Add the details.
+        $("#" + val['status'] + "_alerts").find('tbody')
+        .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
+      }
       if ( status == "pending" ) {
 
-          var d = Math.round( val['raise_at'] * 1000)
-          d = parseFloat(d);
-          d = new Date( d  );
+      var d = Math.round( val['raise_at'] * 1000)
+      d = parseFloat(d);
+      d = new Date( d  );
 
-          // id | source | subject | last notified | action
-          var t = "<tr><td>" + val['i'] + "</td>";
-          t += "<td>" + val['source'] + "</td>";
-          t += "<td>" + val['subject'] + "</td>";
-          t += "<td>" + d  + "</td>";
-          t += "<td><a href=\"/clear/" + (val['i']) + "\">clear</a></td>"
+      // id | source | subject | last notified | action
+      var t = "<tr><td>" + val['i'] + "</td>";
+        t += "<td>" + val['source'] + "</td>";
+        t += "<td>" + val['subject'] + "</td>";
+        t += "<td>" + d  + "</td>";
+        t += "<td><a href=\"/clear/" + (val['i']) + "\">clear</a></td>"
 
-          // Add the alert
-          $("#" + val['status'] + "_alerts").find('tbody').append(t)
+        // Add the alert
+        $("#" + val['status'] + "_alerts").find('tbody').append(t)
 
-          // Add the details.
-          $("#" + val['status'] + "_alerts").find('tbody')
-          .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
+        // Add the details.
+        $("#" + val['status'] + "_alerts").find('tbody')
+        .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
       }
       if ( status == "cleared" ) {
 
-          // id | source | subject | action
-          var t = "<tr><td>" + val['i'] + "</td>";
-          t += "<td>" + val['source'] + "</td>";
-          t += "<td>" + val['subject'] + "</td>";
+      // id | source | subject | action
+      var t = "<tr><td>" + val['i'] + "</td>";
+        t += "<td>" + val['source'] + "</td>";
+        t += "<td>" + val['subject'] + "</td>";
 
-          // Add the alert
-          $("#" + val['status'] + "_alerts").find('tbody').append(t)
+        // Add the alert
+        $("#" + val['status'] + "_alerts").find('tbody').append(t)
 
-          // Add the details.
-          $("#" + val['status'] + "_alerts").find('tbody')
-          .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
-       }
+        // Add the details.
+        $("#" + val['status'] + "_alerts").find('tbody')
+        .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
+      }
 
 
-          // Set the title.
-          document.title = "Alerts [" + h['raised'] + "/" + h['pending'] + "/" + h['cleared'] + "]";
+      // Set the title.
+      document.title = "Alerts [" + h['raised'] + "/" + h['pending'] + "/" + h['cleared'] + "]";
 
-          });
-          });
-          })();
+      });
+      });
+      })();
     </script>
   </head>
   <body>
-      <nav class="navbar navbar-default">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Purple Alert Index</a>
-          </div>
-          <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li><a href="/">Home</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li ><a href="/logout">Logout</a></li>
-            </ul>
-          </div>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Purple Alert Index</a>
         </div>
-      </nav>
-<div class="wrapper">
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li ><a href="/logout">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="wrapper">
+      <div class="container">
+        <h2>Alerts</h2>
+        <ul class="nav nav-tabs" id="myTab">
+          <li class="active"><a data-toggle="tab" href="#raised">Raised</a></li>
+          <li><a data-toggle="tab" href="#pending">Pending</a></li>
+          <li><a data-toggle="tab" href="#cleared">Cleared</a></li>
+        </ul>
 
-    <div class="container">
-      <h2>Alerts</h2>
-      <ul class="nav nav-tabs" id="myTab">
-        <li class="active"><a data-toggle="tab" href="#raised">Raised</a></li>
-        <li><a data-toggle="tab" href="#pending">Pending</a></li>
-        <li><a data-toggle="tab" href="#cleared">Cleared</a></li>
-      </ul>
-
-      <div class="tab-content">
-        <div id="raised" class="tab-pane fade in active">
-          <p>&nbsp;</p>
-          <table id="raised_alerts" class="table table-striped table-hover table-bordered table-condensed" >
-            <tr><th>#</th><th>Source</th><th>Subject</th><th>Last Notified At</th><th>Actions</th></tr>
-          </table>
-        </div>
-        <div id="pending" class="tab-pane fade">
-          <p>&nbsp;</p>
-          <table id="pending_alerts" class="table table-striped table-hover table-bordered table-condensed" >
-            <tr><th>#</th><th>Source</th><th>Subject</th><th>Raise Time</th><th>Actions</th></tr>
-          </table>
-        </div>
-        <div id="cleared" class="tab-pane fade">
-          <p>&nbsp;</p>
-          <table id="cleared_alerts" class="table table-striped table-hover table-bordered table-condensed" >
-            <tr><th>#</th><th>Source</th><th>Subject</th></tr>
-          </table>
+        <div class="tab-content">
+          <div id="raised" class="tab-pane fade in active">
+            <p>&nbsp;</p>
+            <table id="raised_alerts" class="table table-striped table-hover table-bordered table-condensed" >
+              <tr><th>#</th><th>Source</th><th>Subject</th><th>Last Notified At</th><th>Actions</th></tr>
+            </table>
+          </div>
+          <div id="pending" class="tab-pane fade">
+            <p>&nbsp;</p>
+            <table id="pending_alerts" class="table table-striped table-hover table-bordered table-condensed" >
+              <tr><th>#</th><th>Source</th><th>Subject</th><th>Raise Time</th><th>Actions</th></tr>
+            </table>
+          </div>
+          <div id="cleared" class="tab-pane fade">
+            <p>&nbsp;</p>
+            <table id="cleared_alerts" class="table table-striped table-hover table-bordered table-condensed" >
+              <tr><th>#</th><th>Source</th><th>Subject</th></tr>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-</div>
     <footer id="footer" class="footer navbar-fixed-bottom steve-footer" role="navigation">
       <div class="container">
         <div class="col-md-6">
@@ -188,6 +187,5 @@
         </div>
       </div>
     </footer>
-
   </body>
 </html>
