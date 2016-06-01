@@ -1,3 +1,5 @@
 Makefile
 dbfile
 logs/
+lib/Purple/Alert/Notifier/Local.pm
+supervise/
