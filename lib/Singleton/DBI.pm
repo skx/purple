@@ -80,8 +80,8 @@ sub new
     my $found = 0;
     $found = 1 if ( -e $file );
 
-    my $dbh = DBI->connect( "dbi:SQLite:dbname=$file", "",
-                            "" { sqlite_use_immediate_transaction => 1, } );
+    my $dbh = DBI->connect( "dbi:SQLite:dbname=$file", "", "",
+                            { sqlite_use_immediate_transaction => 1, } );
 
 
     my $sql = <<EOF;
