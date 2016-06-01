@@ -98,6 +98,17 @@ EOF
 
     $dbh->do($sql) unless ($found);
 
+    #
+    #  Try to speedup.
+    #
+    $dbh->do("PRAGMA synchronous = OFF");
+    $dbh->do("PRAGMA journal_mode = WAL");
+
+    #
+    #  Attempt to avoid locking issues, via a timeoout of two seconds.
+    #
+    $dbh->sqlite_busy_timeout( 1000 * 2 );
+
     return ($dbh);
 }
 
