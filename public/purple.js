@@ -6,6 +6,12 @@ function update_alerts()
         h['pending'] = 0
         h['acknowledged'] = 0
 
+        // Clear our table of past events - by removing all rows of
+        // the table, except for the first (which is the header-row).
+        for (var key in h) {
+            $("#" + key + "_alerts").find("tr:gt(0)").remove();
+        }
+
         $.each( data, function( key, val ) {
 
             // Bump the count of this type of alerts, for the title.
