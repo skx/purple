@@ -1,10 +1,11 @@
 # Purple
 
-Purple is an event/alert manager which allows central collection and distribution of "alerts".  In short purple allows tracking the state of a number of alerts, raising them on demand.  For example a trivial `heartbeat` alert might be implemented by sending a message every minute:
+Purple is an alert manager which allows the centralised collection and distribution of "alerts".
+
+For example a trivial heartbeat-style alert might be implemented by sending a message every minute with a body containing:
 
 * "Raise an alert if you don't hear from me in 5 minutes".
 
-If a client-machine sends this message every 60 seconds (or even more frequently!) all is OK.  When the messages cease an alert will be raised five minutes after the last successfully-received submission.
 
 
 
@@ -12,21 +13,23 @@ If a client-machine sends this message every 60 seconds (or even more frequently
 
 Alerts are submitted by making a HTTP POST-request to the purple-server, with a JSON-payload of a [number of fields](ALERTS.md).
 
-When a new POST request is received it will be transformed into an alert, which will be saved in the database if it is new.  If a submission relates to an alert which has previously been seen then that existing alert-object will be updated.
+When a new POST request is received it will be transformed into an alert:
+
+* If the alert is new it will be saved into the database.
+* If the alert has been previously seen, then the fields of that existing alert will be updated.
+     * This is possible because alerts are uniquely identified by a combination of the submitted `id` field and the source IP address from which it was received.
 
 Alerts have several states:
 
-* Acknowledged
-   * An alert in the acknowledged state will not re-notify.
 * Pending.
    * An alert will raise at some point in the future.
 * Raised.
-   * If an alert is raised notifications will be sent out every **minute** to inform your sysadmin(s).
+   * A raised alert will trigger a notification every **minute** to inform your sysadmin(s).
+* Acknowledged
+   * An alert in the acknowledged state will not re-notify.
 * Cleared
    * Alerts which are cleared have previously been raised but have now cleared.
    * Alerts in the cleared-state are reaped over time.
-
-To handle uniqueness alerts are keyed upon the user-submitted `id` field, along with the source IP from which the submission was received.  This allows you to send updates from multiple hosts named `heartbeat` without any confusion, for example.
 
 
 ## Architecture
@@ -40,7 +43,7 @@ In addition to the core-server there is a second process which constantly scans 
    * It also presents a web interface to the alert-events.
 * The alerter reads that database to send out notifications.
    * If an alert is in the `acknowledged` state it is ignored.
-   * If an alert is in the `cleared` state it is removed.
+   * If an alert is in the `cleared` state it is removed from the database.
    * If an alert is in the `pending` state and the notification time has passed it is moved into the `raised` state, and a notification is generated.
    * If an alert is in the `raised` state, and a notification was made more than a minute ago another notification is generated.
 

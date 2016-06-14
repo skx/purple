@@ -57,7 +57,7 @@ To raise an alert send a JSON message with the `raise` field set to `now`:
        "raise"   : "now",
      }
 
-This alert will be immediately raised, and the notifications will repeat until the alert is cleared - either via a clear-submission, or via the Web user-interface.
+This alert will be immediately raised, and the notifications will repeat until the alert is cleared, or acknowledged via the the web user-interface (or an update from the submitter).
 
 
 ## Explicitly Clearing Alerts
@@ -107,6 +107,8 @@ For example you could send, every minute, a submission like this:
        }
 
 Assuming that this update is sent every 60 seconds the alert will raise three minutes after the last update.  That would require the host was down for three minutes, or that three updates were lost en route.
+
+This works because the `raise` time is updated every time the incoming alert is received.  So when the first update is seen the `+5m` field might expand to the absolute time `Tue Jun 14 09:20:21 EEST 2016`, then a minute later the field will change to `Tue Jun 14 09:21:21 EEST 2016`.  The time at which the alert will raise will be pushed back a minute on each update, unless these updates cease.
 
 
 # Notifications
