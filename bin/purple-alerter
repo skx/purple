@@ -19,6 +19,11 @@
 #
 #   > This keeps our database state low.
 #
+# * If the alert is in the acknowldged state, ignore it.
+#
+#   > This stops notifications from being repeated when you're aware of them.
+#
+
 
 
 use strict;

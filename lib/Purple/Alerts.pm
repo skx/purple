@@ -243,6 +243,45 @@ sub clearEvent
 
 }
 
+
+=head2 raiseEvent
+
+Raise the event with the given identifier.
+
+=cut
+
+sub raiseEvent
+{
+    my ( $self, $id ) = (@_);
+
+    my $dbh = Singleton::DBI->instance();
+
+    my $fetch = $dbh->prepare("UPDATE events SET status='raised' WHERE i=?");
+    $fetch->execute($id);
+    $fetch->finish();
+
+}
+
+=head2 acknowledgeAlert
+
+Ack the event with the given identifier.
+
+=cut
+
+sub acknowledgeAlert
+{
+    my ( $self, $id ) = (@_);
+
+    my $dbh = Singleton::DBI->instance();
+
+    my $fetch =
+      $dbh->prepare("UPDATE events SET status='acknowledged' WHERE i=?");
+    $fetch->execute($id);
+    $fetch->finish();
+
+}
+
+
 1;
 
 

@@ -67,6 +67,14 @@ any '/logout' => sub {
 };
 
 
+# Acknowledge an event which is in the raised state.
+get '/acknowledge/:id' => require_login sub {
+    my $tmp = Purple::Alerts->new();
+    my $out = $tmp->acknowledgeAlert( params->{ 'id' } );
+    return ( redirect '/' );
+};
+
+
 # Clear an event which is in the raised/pending state.
 get '/clear/:id' => require_login sub {
     my $tmp = Purple::Alerts->new();
@@ -74,6 +82,12 @@ get '/clear/:id' => require_login sub {
     return ( redirect '/' );
 };
 
+# Raise an event which is in the ack'd state.
+get '/raise/:id' => require_login sub {
+    my $tmp = Purple::Alerts->new();
+    my $out = $tmp->raiseEvent( params->{ 'id' } );
+    return ( redirect '/' );
+};
 
 # Retrieve all events as JSON, invoked by AJAX for the web-ui.
 get '/events' => sub {

@@ -49,7 +49,7 @@
       var h = {};
       h['raised'] = 0
       h['pending'] = 0
-      h['cleared'] = 0
+      h['acknowledged'] = 0
 
       $.each( data, function( key, val ) {
 
@@ -70,7 +70,9 @@
         t += "<td>" + val['source'] + "</td>";
         t += "<td class=\"click\">" + val['subject'] + "</td>";
         t += "<td>" + d  + "</td>";
-        t += "<td><a href=\"/clear/" + (val['i']) + "\">clear</a></td>"
+        t += "<td><a href=\"/acknowledge/" + (val['i']) + "\">ack</a>"
+        t += " <a href=\"/clear/" + (val['i']) + "\">clear</a>"
+        t += "</td>"
 
         // Add the alert
         $("#" + val['status'] + "_alerts").find('tbody').append(t)
@@ -78,6 +80,22 @@
         // Add the details.
         $("#" + val['status'] + "_alerts").find('tbody')
         .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
+      }
+      if ( status == "acknowledged" ) {
+
+      // id | source | subject | last notified | action
+      var t = "<tr><td>" + val['i'] + "</td>";
+        t += "<td>" + val['source'] + "</td>";
+        t += "<td class=\"click\">" + val['subject'] + "</td>";
+        t += "<td><a href=\"/raise/" + (val['i']) + "\">raise</a> <a href=\"/clear/" + (val['i']) + "\">clear</a></td>"
+
+        // Add the alert
+        $("#" + val['status'] + "_alerts").find('tbody').append(t)
+
+        // Add the details.
+        $("#" + val['status'] + "_alerts").find('tbody')
+        .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
+
       }
       if ( status == "pending" ) {
 
@@ -99,24 +117,10 @@
         $("#" + val['status'] + "_alerts").find('tbody')
         .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
       }
-      if ( status == "cleared" ) {
-
-      // id | source | subject | action
-      var t = "<tr><td>" + val['i'] + "</td>";
-        t += "<td>" + val['source'] + "</td>";
-        t += "<td class=\"click\">" + val['subject'] + "</td>";
-
-        // Add the alert
-        $("#" + val['status'] + "_alerts").find('tbody').append(t)
-
-        // Add the details.
-        $("#" + val['status'] + "_alerts").find('tbody')
-        .append("<tr style=\"display:none;\"><td></td><td colspan=\"4\"><p>" + val['detail'] + "</p></td></tr>")
-      }
 
 
       // Set the title.
-      document.title = "Alerts [" + h['raised'] + "/" + h['pending'] + "/" + h['cleared'] + "]";
+      document.title = "Alerts [" + h['raised'] + "/" + h['acknowledged'] + "/" + h['pending'] + "]";
 
       });
       });
@@ -150,8 +154,8 @@
         <h2>Alerts</h2>
         <ul class="nav nav-tabs" id="myTab">
           <li class="active"><a data-toggle="tab" href="#raised">Raised</a></li>
+          <li><a data-toggle="tab" href="#acknowledged">Acknowledged</a></li>
           <li><a data-toggle="tab" href="#pending">Pending</a></li>
-          <li><a data-toggle="tab" href="#cleared">Cleared</a></li>
         </ul>
 
         <div class="tab-content">
@@ -161,16 +165,16 @@
               <tr><th>#</th><th>Source</th><th>Subject</th><th>Last Notified At</th><th>Actions</th></tr>
             </table>
           </div>
+          <div id="acknowledged" class="tab-pane fade">
+            <p>&nbsp;</p>
+            <table id="acknowledged_alerts" class="table table-striped table-hover table-bordered table-condensed" >
+              <tr><th>#</th><th>Source</th><th>Subject</th><th>Actions</th></tr>
+            </table>
+          </div>
           <div id="pending" class="tab-pane fade">
             <p>&nbsp;</p>
             <table id="pending_alerts" class="table table-striped table-hover table-bordered table-condensed" >
               <tr><th>#</th><th>Source</th><th>Subject</th><th>Raise Time</th><th>Actions</th></tr>
-            </table>
-          </div>
-          <div id="cleared" class="tab-pane fade">
-            <p>&nbsp;</p>
-            <table id="cleared_alerts" class="table table-striped table-hover table-bordered table-condensed" >
-              <tr><th>#</th><th>Source</th><th>Subject</th></tr>
             </table>
           </div>
         </div>

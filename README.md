@@ -14,8 +14,10 @@ Alerts are submitted by making a HTTP POST-request to the purple-server, with a 
 
 When a new POST request is received it will be transformed into an alert, which will be saved in the database if it is new.  If a submission relates to an alert which has previously been seen then that existing alert-object will be updated.
 
-Alerts have three states:
+Alerts have several states:
 
+* Acknowledged
+   * An alert in the acknowledged state will not re-notify.
 * Pending.
    * An alert will raise at some point in the future.
 * Raised.
@@ -37,6 +39,7 @@ In addition to the core-server there is a second process which constantly scans 
    * It stores incoming alerts in an SQLite database.
    * It also presents a web interface to the alert-events.
 * The alerter reads that database to send out notifications.
+   * If an alert is in the `acknowledged` state it is ignored.
    * If an alert is in the `cleared` state it is removed.
    * If an alert is in the `pending` state and the notification time has passed it is moved into the `raised` state, and a notification is generated.
    * If an alert is in the `raised` state, and a notification was made more than a minute ago another notification is generated.
@@ -70,7 +73,7 @@ The `bin/alert` script handles the state-transitions as you would expect:
     * Send the a notification for each alert-event.
 * Select all alerts which are in state `raised`.
    * Re-notify if it has been over a minute since the last notification.
-* Delete all alerts in a cleared state.
+* Delete all alerts in a `cleared` state.
 
 
 ## Installation
