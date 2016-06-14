@@ -1,0 +1,16 @@
+.wrapper {
+    margin-bottom: 100px;
+}
+.steve-footer {
+    margin-top: 70px;
+    color: #999;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e5e5e5;
+}
+.steve-footer .nav-header {
+    color: black;
+    font-weight: bold;
+}
+.click {
+    cursor: pointer;
+}
