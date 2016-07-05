@@ -1,0 +1,178 @@
+
+=head1 NAME
+
+Purple::Alert::Notifier::Local - Issue notifications for raised alerts.
+
+=head1 SYNOPSIS
+
+      use strict;
+      use warnings;
+
+      use Alert::Notifier::Local;
+
+      my $tmp = Alert::Notifier::Local->new();
+      $tmp->notify( $event );
+
+=cut
+
+=head1 DESCRIPTION
+
+This module is responsible for issuing a notification upon a raised event,
+and is invoked by the C<bin/notify> script if it can be successfully loaded.
+
+If there is no L<Alert::Notifier::Local> module discovered at run-time then
+the default notification method is merely to dump the alert to the console.
+
+This module handles escalation:
+
+=over 8
+
+=item The system notifies a single individual for the first ten minutes.
+
+=item After that it notifies the person AND their superior.
+
+=back
+
+=cut
+
+
+=head1 METHODS
+
+Now follows documentation on the available methods.
+
+=cut
+
+package Purple::Alert::Notifier::Local;
+
+use Purple::Alerts;
+
+
+=head2 new
+
+Constructor.
+
+No arguments are expected or used.
+
+=cut
+
+sub new
+{
+    my ( $class, %params ) = @_;
+    my $self = {};
+    bless( $self, $class );
+    return $self;
+}
+
+
+=head2 notify
+
+This method is invoked for each alert which is to be notified.
+
+This example issues notifications via email, just like
+C<Local.pm.email> but it also b<escalates>:
+
+* For the first ten minutes alerts will be sent to one user.
+
+* After the first ten minutes alerts will be sent to that user,
+  as well as their boss.
+
+This simulates a more realistic policy that might be in use
+if purple were to be used in an Ops/sysadmin role.
+
+Parameters are:
+
+=over 8
+
+=item id
+The ID of the alert, which can be used to fetch the details.
+
+=item reason
+A string describing whether this alert is being raised ("raise"), or whether the notification is old and is being re-raised ("reraise").
+
+=back
+
+=cut
+
+sub notify
+{
+    my ( $self, $id, $reason ) = (@_);
+
+    # Get the alert-data.
+    my $tmp   = Purple::Alerts->new();
+    my $event = $tmp->getEvent($id);
+
+    #
+    # We now have the alert-data, which is a hash.
+    #
+    # Keys include:
+    #
+    #    id
+    #    raise_at
+    #    subject
+    #    detail
+    #    source
+    #
+
+
+    #
+    # Special case - only notify ONCE if the ID contains `once`.
+    #
+    # On initial notification we have `reason: raise`, on subsequent
+    # notifications we have `reason: reraise`, so we can differentiate
+    # them successfully.
+    #
+    return
+      if ( ( $reason =~ /reraise/i ) && ( $event->{ 'id' } =~ /\.once/i ) );
+
+
+    #
+    #  This is a hash of the people to notify and the threshold
+    # after which to notify them, in seconds.
+    #
+    my %users;
+    $users{ 'user@example.com' } = 0;
+    $users{ 'boss@example.com' } = 60 * 10;
+
+    #
+    #  So we iterate over each user - if the time is over the given
+    # threshold we send them an alert.
+    #
+    foreach my $user ( keys %users )
+    {
+        #
+        #  Time since the creation in which we notify the user.
+        #
+        #  i.e. "0" means immediately.
+        #  i.e. 300 means inform the user 300s/5m after raise.
+        #
+        my $time = $users{ $user };
+
+        #
+        # How old is this alert in seconds?
+        #
+        my $age = scalar( time() ) - $event->{ 'raise_at' };
+
+        if ( $age > $time )
+        {
+            # Show who we're notifying.
+            print "Notifying user: $user\n";
+
+            # Send an email to the user.
+            open( SENDMAIL, "|/usr/lib/sendmail -t" ) or return;
+            print SENDMAIL <<EOF;
+To: $user
+From: $user
+Subject: $reason: [$event->{'id'}] - $event->{'subject'}";
+X-Purple: notification
+X-IP: $event->{'source'}
+
+$event->{'detail'}
+
+EOF
+            close(SENDMAIL);
+        }
+    }
+}
+
+
+1;
