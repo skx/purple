@@ -1,7 +1,5 @@
-Makefile
 dbfile
 dbfile-shm
 dbfile-wal
 logs/
 lib/Purple/Alert/Notifier/Local.pm
-supervise/
