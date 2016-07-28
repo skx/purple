@@ -3,5 +3,21 @@
 # Launch the application, in production, with a per-day log-file
 #
 
-exec plackup -s Twiggy --workers=4 -0 127.0.0.1 -p 5151 -a ./bin/purple.psgi \
+#
+# By default we listen on port 5151
+#
+port=5151
+
+#
+# But if the current user is `s-purple` we'll default to
+# the numeric ID of that user
+#
+if [ "$USER" = "s-purple" ]; then
+    port=$(id -u)
+fi
+
+#
+# Launch the application.
+#
+exec plackup -s Twiggy --workers=4 -0 127.0.0.1 -p $port -a ./bin/purple.psgi \
         --access-log logs/access.$(date +%Y-%m-%d).log -E production
