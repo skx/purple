@@ -1,29 +1,86 @@
 #!/usr/bin/perl -Ilib/
-#
-# This connects to the SQLite database and does the alerting:
-#
-# * If an event is in the `pending` state, and the `raise_time` is
-#   in the past then change the event-status to `raised` and
-#   sends the notification.
-#
-#   > This ensures new alerts are sent to people.
-#
-#
-# * If an alert is in the raised state and the notified_at is
-#   more than a minut ago - update that field and re-alert.
-#
-#   > This ensures that alerts are not ignored.
-#
-#
-# * If the alert is in the `cleared` state, delete it.
-#
-#   > This keeps our database state low.
-#
-# * If the alert is in the acknowldged state, ignore it.
-#
-#   > This stops notifications from being repeated when you're aware of them.
-#
 
+=head1 NAME
+
+purple-alerter - Process our alerts
+
+=cut
+
+=head1 SYNOPSIS
+
+  purple-alerter [options]
+
+
+  Help Options:
+
+    --help        Show the help information for this script.
+    --verbose     Be more verbose in operation.
+
+  Flags
+
+    --period=N    Delay this many seconds between runs.
+    --single      Execute only a single run.
+
+=cut
+
+=head1 ABOUT
+
+This connects to the SQLite database and does the alerting:
+
+* If an event is in the `pending` state, and the `raise_time` is
+  in the past then change the event-status to `raised` and
+  sends the notification.
+
+   > This ensures new alerts are sent to people.
+
+
+ * If an alert is in the raised state and the notified_at is
+   more than a minute ago - update that field and re-alert.
+
+   > This ensures that alerts are not ignored.
+
+
+ * If the alert is in the `cleared` state, delete it.
+
+   > This keeps our database state low.
+
+ * If the alert is in the acknowldged state, ignore it.
+
+   > This stops notifications from being repeated when you're aware of them.
+
+=cut
+
+=head1 LICENSE
+
+This module is free software; you can redistribute it and/or modify it
+under the terms of either:
+
+a) the GNU General Public License as published by the Free Software
+Foundation; either version 2, or (at your option) any later version,
+or
+
+b) the Perl "Artistic License".
+
+=cut
+
+=head1 AUTHOR
+
+ Steve
+ --
+ http://www.steve.org.uk/
+
+=cut
+
+=head1 LICENSE
+
+Copyright (c) 2016 by Steve Kemp.  All rights reserved.
+
+This module is free software;
+you can redistribute it and/or modify it under
+the same terms as Perl itself.
+The LICENSE file contains the full text of the license.
+
+=cut
 
 
 use strict;
@@ -44,6 +101,7 @@ $CONFIG{ 'period' } = 60;
 exit
   if (
        !GetOptions( "verbose",  \$CONFIG{ 'verbose' },
+                    "single",   \$CONFIG{ 'single' },
                     "period=i", \$CONFIG{ 'period' } ) );
 
 
@@ -51,9 +109,10 @@ exit
 #
 #  Create the helper.
 #
-my $alerter = Purple::Alert::Notifier->new( notify  => \&my_notify,
-                                            verbose => $CONFIG{ 'verbose' },
-                                            delay   => ( $CONFIG{ 'period' } - 1 ) );
+my $alerter =
+  Purple::Alert::Notifier->new( notify  => \&my_notify,
+                                verbose => $CONFIG{ 'verbose' },
+                                delay   => ( $CONFIG{ 'period' } - 1 ) );
 
 
 
@@ -72,8 +131,11 @@ while (1)
     # Notify on any new events which have reached their raise-time
     $alerter->notifyNew();
 
-    #  If any alerts were last notified >60second ago then renotify.
+    #  If any alerts were last notified >60 seconds ago then renotify.
     $alerter->reNotify();
+
+    # If we're running a single loop exit now.
+    exit(0) if ( $CONFIG{'single'} );
 
     # How long did this loop take us?
     my $end  = time();
