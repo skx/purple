@@ -15,6 +15,8 @@ the two provided samples:
 
 * `Local.pm.email`
    * Sends alerts via email.
+* `Local.pm.escalate`
+   * Sends alerts via email, with escalation.
 * `Local.pm.pushover`
    * POSTs messages to a mobile phone via [pushover](http://pushover.net/)
    * NOTE: You need to update that script to contain your credentials.
@@ -38,8 +40,9 @@ on failure:
         # The alerter
         ./bin/purple-alerter [-v]
 
-Both of these can be launched under the control of systemd, via the files provided
-beneath `examples/`.
+Both of these can be launched under the control of systemd, via the files provided beneath `examples/`.
+
+If you wish you can use `cron` to trigger state-transitions, by executing `bin/purple-alerter --single [--verbose]` every minute.
 
 
 # Problems?

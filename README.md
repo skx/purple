@@ -46,6 +46,7 @@ In addition to the core-server there is a second process which constantly scans 
    * If an alert is in the `cleared` state it is removed from the database.
    * If an alert is in the `pending` state and the notification time has passed it is moved into the `raised` state, and a notification is generated.
    * If an alert is in the `raised` state, and a notification was made more than a minute ago another notification is generated.
+   * Finally if an alert has a `raise` time in the future then it is reset to be `pending`, allowing heartbeat-style alerts to auto-clear.
 
 
 ## Alert Submissions
@@ -67,9 +68,15 @@ Further details are available in the [alert guide](ALERTS.md).
 
 There is no built-in facility for sending text-messages, sending pushover notifications, or similar.  Instead the default alerting behaviour is to simply dump the details of the raised and re-raised alerts to the console.
 
-It is assumed you will have your own local preferred mechanism for sending the alerts, be it SMS, PushOver, email, or something else.  To implement your notification method you'll need to override the `notify` subroutine in the `lib/Purple/Alert/Notifier/Local.pm` module, using [the sample Local.pm modules](https://github.com/skx/purple/blob/master/lib/Purple/Alert/Notifier/) as examples.  The `bin/purple-alerter` script will invoke that method if it is present, if it is not then alerts in the `raised` state will merely be dumped ot the console.
+It is assumed you will have your own local preferred mechanism for sending the alerts, be it SMS, PushOver, email, or something else.  To implement your notification method you'll need to override the `notify` subroutine in the `lib/Purple/Alert/Notifier/Local.pm` module, using the sample code as examples.
 
-The `bin/alert` script handles the state-transitions as you would expect:
+The following samples are available:
+
+* Send email - [Local.pm.email](https://github.com/skx/purple/blob/master/lib/Purple/Alert/Notifier/Local.pm.email)
+    * With escalation - [Local.pm.escalate](https://github.com/skx/purple/blob/master/lib/Purple/Alert/Notifier/Local.pm.escalate)
+* Send a pushover event - [Local.pm.pushover](https://github.com/skx/purple/blob/master/lib/Purple/Alert/Notifier/Local.pm.pushover)
+
+The `bin/purple-alerter` script handles the state-transitions as you would expect:
 
 * Select all alerts which have a raise-time of "now".
     * Change the state to "`raised`".
@@ -77,6 +84,7 @@ The `bin/alert` script handles the state-transitions as you would expect:
 * Select all alerts which are in state `raised`.
    * Re-notify if it has been over a minute since the last notification.
 * Delete all alerts in a `cleared` state.
+   * Clear all alerts which have a `raise` in the future.
 
 
 ## Installation
