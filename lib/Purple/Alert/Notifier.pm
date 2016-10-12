@@ -28,6 +28,8 @@ In brief there are three actions you can take:
 
 =item Reaping old alerts, so that they don't clutter our database and our web-UI.
 
+=item Clearing alerts when they are re-submitted with raise-times in the future.
+
 =item Raising a notification for any alert which has now reached the time it should be fired.
 
 =item Re-raising a notification for any alert which is in the raised-state, and which was last notified in excess of 60 seconds ago.
@@ -95,6 +97,30 @@ sub reap
     $clear->execute();
     $clear->finish();
 }
+
+
+=head2 timewarp
+
+If an alert is in a raised state, but the `raise_at` time is in the
+future then we can clear it.
+
+This allows heartbeat alerts to auto-clear when they return.
+
+=cut
+
+sub timewarp
+{
+    my ($self) = (@_);
+
+    my $dbh = $self->{ 'dbi' };
+
+    my $sql = $dbh->prepare(
+        "UPDATE events SET status='pending' WHERE ( raise_at > strftime('%s','now') ) AND raise_at > 0"
+    );
+    $sql->execute();
+    $sql->finish();
+}
+
 
 
 =head2 notifyNew

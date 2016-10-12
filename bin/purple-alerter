@@ -27,14 +27,19 @@ purple-alerter - Process our alerts
 
 This connects to the SQLite database and does the alerting:
 
-* If an event is in the `pending` state, and the `raise_time` is
+ * If an event is in the `pending` state, and the `raise_time` is
   in the past then change the event-status to `raised` and
   sends the notification.
 
    > This ensures new alerts are sent to people.
 
 
- * If an alert is in the raised state and the notified_at is
+ * If the alert has a `raise_time` in the future then it is cleared
+
+   > This allows heartbeats to auto-clear when hosts return.
+
+
+ * If an alert is in the raised state and the `notified_at` is
    more than a minute ago - update that field and re-alert.
 
    > This ensures that alerts are not ignored.
@@ -44,9 +49,11 @@ This connects to the SQLite database and does the alerting:
 
    > This keeps our database state low.
 
+
  * If the alert is in the acknowldged state, ignore it.
 
    > This stops notifications from being repeated when you're aware of them.
+
 
 =cut
 
@@ -128,6 +135,9 @@ while (1)
     # Reap cleared events.
     $alerter->reap();
 
+    # Handle alerts which are in the future.
+    $alerter->timewarp();
+
     # Notify on any new events which have reached their raise-time
     $alerter->notifyNew();
 
@@ -135,7 +145,7 @@ while (1)
     $alerter->reNotify();
 
     # If we're running a single loop exit now.
-    exit(0) if ( $CONFIG{'single'} );
+    exit(0) if ( $CONFIG{ 'single' } );
 
     # How long did this loop take us?
     my $end  = time();
