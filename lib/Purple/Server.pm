@@ -24,6 +24,7 @@ use warnings;
 
 use Dancer;
 use Dancer::Plugin::Auth::Extensible;
+use HTML::Entities;
 
 
 set show_errors => 1;
@@ -128,7 +129,7 @@ post '/events' => sub {
 # All other route are 404.
 any qr{.*} => sub {
     status 'not_found';
-    "The path " . request->path . " was not found";
+    "The path " . encode_entities(request->path) . " was not found";
 };
 
 
