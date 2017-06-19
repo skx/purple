@@ -94,7 +94,7 @@ get '/raise/:id' => require_login sub {
 };
 
 # Retrieve all events as JSON, invoked by AJAX for the web-ui.
-get '/events' require_login => sub {
+get '/events' => require_login sub {
     my $tmp = Purple::Alerts->new();
     my $out = $tmp->getEvents();
     return to_json($out);
