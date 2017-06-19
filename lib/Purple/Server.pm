@@ -62,6 +62,9 @@ post '/login' => sub {
 
 # Handle a logout
 any '/logout' => sub {
+    session logged_in_user       => undef;
+    session logged_in_user_realm => undef;
+
     session->destroy;
     session->flush;
     send_file 'logout.html';
@@ -91,7 +94,7 @@ get '/raise/:id' => require_login sub {
 };
 
 # Retrieve all events as JSON, invoked by AJAX for the web-ui.
-get '/events' => sub {
+get '/events' require_login => sub {
     my $tmp = Purple::Alerts->new();
     my $out = $tmp->getEvents();
     return to_json($out);
