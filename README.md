@@ -1,3 +1,10 @@
+
+**NOTE** This project has been superseded by a rewrite in golang:
+
+* https://github.com/skx/purppura/
+
+
+
 # Purple
 
 Purple is an alert manager which allows the centralised collection and distribution of "alerts".
